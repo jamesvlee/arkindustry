@@ -1,2 +1,2 @@
 # arkindustry
-EVEOnline arkindustry corp.
+EVEOnline Ark Industry corp.
