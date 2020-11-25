@@ -1,0 +1,25 @@
+{% set p = 'market' %}
+{% extends 'layout.html' %}
+{% block title %}市场查询{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='type_search.less') }}">
+{% endblock %}
+{% block main %}
+<form novalidate class="space-form" action="" method="post">
+  {{ form.csrf_token }}
+  {{ form.item_name.label }} {{ form.item_name }}
+  <br>
+  &emsp;&emsp;&emsp;&emsp; <span class="prompt">如：伊甸币</span>
+  <br>
+  {% for error in form.item_name.errors %}
+  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
+  <br>
+  {% endfor %}
+  {% if error_msg %}
+  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error_msg }}</span>
+  <br>
+  {% endif %}
+  <input type="submit" value="查询">
+</form>
+{% endblock %}

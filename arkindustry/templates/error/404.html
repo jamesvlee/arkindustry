@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% block title %}页面未找到{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='error.less') }}">
+{% endblock %}
+{% block main %}
+<h2>404：页面未找到</h2>
+<p>您访问的页面已丢失或过期。</p>
+{% endblock %}

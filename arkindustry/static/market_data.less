@@ -1,0 +1,142 @@
+@import "layout.less";
+
+form.space-form {
+  input[type="submit"] {
+    margin-bottom: 28px;
+  }
+}
+.hide-info {
+  display: none;
+  margin-bottom: 0;
+  color: @space-gray;
+  font-size: @space-s-font-size;
+  span {
+    font-weight: bold;
+  }
+}
+.item-info {
+  color: @space-yellow;
+  font-size: @space-m-font-size;
+  .item-name {
+    font-weight: bold;
+  }
+}
+p.no-data {
+  margin-top: 28px;
+  span {
+    color: @space-gray;
+    font-size: @space-m-font-size;
+  }
+}
+.sellorbuy {
+  margin-bottom: 21px;
+  .show-sell, .show-buy {
+    font-size: @space-m-font-size;
+    color: @space-white;
+    font-weight: bold;
+  }
+  .gray {
+    color: @space-gray;
+  }
+}
+a.sell-prompt {
+  font-size: @space-s-font-size;
+  color: @space-gray;
+  font-weight: bold;
+}
+a.sell-prompt:hover {
+  color: @space-gray;
+}
+a.buy-prompt {
+  font-size: @space-s-font-size;
+  color: @space-gray;
+  font-weight: bold;
+}
+a.buy-prompt:hover {
+  color: @space-gray;
+}
+table.sell-orders, table.buy-orders {
+  font-size: @space-s-font-size;
+  margin-bottom: 21px;
+  tr {
+    height: 45px;
+    vertical-align: middel;
+    th {
+      vertical-align: bottom;
+      font-weight: normal;
+      padding-left: 12px;
+    }
+    td {
+      padding-left: 12px;
+    }
+    th.first, td.first {
+      padding-left: 18px;
+    }
+    .location {
+    }
+    .txttoright {
+      text-align: right;
+    }
+    .txtgray {
+      color: @space-gray;
+    }
+    .nowrap {
+      white-space: nowrap;
+    }
+  }
+  tr.highlight {
+    background-color: rgba(43, 56, 69, .4);
+  }
+}
+@media (max-width: 767px) {
+  .hide-info {
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+  table.sell-orders, table.buy-orders {
+    margin-right: 22px;
+    tr {
+      th.hidden-phone, td.hidden-phone {
+        display: none;
+      }
+      th.first-on-phone, td.first-on-phone {
+        padding-left: 5px;
+      }
+      th.last-on-phone, td.last-on-phone {
+        padding-right: 5px;
+      }
+      td.location {
+        font-size: @space-xs-font-size;
+      }
+      td.price {
+        font-size: @space-xs-font-size;
+      }
+    }
+  }
+}
+@media (min-width: 768px) and (max-width: 979px) {
+  .hide-info {
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+  table.sell-orders, table.buy-orders {
+    margin-right: 22px;
+    tr {
+      th.hidden-tablet, td.hidden-tablet {
+        display: none;
+      }
+      .last-data {
+        padding-right: 12px;
+      }
+    }
+  }
+}
+@media (min-width: 980px) {
+  table.sell-orders, table.buy-orders {
+    tr {
+      .last-data {
+        padding-right: 18px;
+      }
+    }
+  }
+}

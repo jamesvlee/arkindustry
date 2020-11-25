@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% block title %}没有权限{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='error.less') }}">
+{% endblock %}
+{% block main %}
+<h2>403：没有权限</h2>
+<p>您无权访问此页面。</p>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% set UPLOADING = 0 %}
+{% set SETTLING = 1 %}
+{% set CLOSED = 2 %}
+{% set MINERAL = 0 %}
+{% set ORE = 1 %}
+<!doctype html>
+<html lang="zh-cn">
+  <head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}{% endblock %} - 方舟工业</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    <link rel="stylesheet/less" href="{{ url_for('static', filename='layout.less') }}">
+    {% endblock %}
+  </head>
+  <body>
+    {% block page %}
+    <div class="bg container-fluid" style="background: url('{{ url_for('static', filename='star-bg.jpg') }}');">
+      <header class="menu">
+	<nav class="nav">
+	  <ul>
+	    <li>
+	      <a href="{{ back_url }}">
+	        <img class="menu-img back" src="{{ url_for('static', filename='9_64_6.png') }}" alt="">
+	      </a>
+	    </li>
+	    <li>
+		<a class="{% if p == 'character' %}selected{% endif %}" href="">
+	        {% if g.user.nickname %}
+	        <a class="character" href="javascript: void(0);">
+	        {{ g.user.nickname }}
+		</a>
+                {% else %}
+                <ul class="character">
+		  <li style="display: inline-block;">
+	            <a class="{% if p == 'login' %}selected{% endif %}" href="{{ url_for('general.login') }}">登录</a>
+		  </li>
+		  <span style="font-size: 12px; font-weight: normal;">或</span>
+		  <li style="display: inline-block;">
+		    <a class="{% if p == 'reg' %}selected{% endif %}" href="{{ url_for('general.register') }}">注册</a>
+		  </li>
+                </ul>
+	        {% endif %}
+	      </a>
+	    </li>
+	    <li>
+		    <a class="{% if p == 'guide' %}selected{% endif %}" href="{{ url_for('general.index') }}">
+	        <img class="menu-img" src="{{ url_for('static', filename='52_64_9.png') }}" alt="">
+	      </a>
+	    </li>
+	    <li>
+		    <a class="{% if p == 'mining' %}selected{% endif %}" href="{{ url_for('mining.mining_channels')  }}">
+		<img class="menu-img" src="{{ url_for('static', filename='12_64_8.png') }}" alt="">
+	      </a>
+	    </li>
+	    <li>
+		    <a class="{% if p == 'market' %}selected{% endif %}" href="{{ url_for('market.type_search') }}">
+		<img class="menu-img" src="{{ url_for('static', filename='32_128_3.png') }}" alt="">
+	      </a>
+	    </li>
+	    <li>
+		    <a class="{% if p == 'contract' %}selected{% endif %}" href="{{ url_for('contract.value_calculate') }}">
+		<img class="menu-img" src="{{ url_for('static', filename='64_64_15.png') }}" alt="">
+	      </a>
+	    </li>
+	    <li>
+	      <a class="{% if p == 'industry' %}selected{% endif %}" href="">
+		<img class="menu-img" src="{{ url_for('static', filename='17_128_1.png') }}" alt="">
+	      </a>
+	    </li>
+	    <li>
+	      <a class="{% if p == 'research' %}selected{% endif %}" href="">
+		<img class="menu-img" src="{{ url_for('static', filename='57_64_9.png') }}" alt="">
+	      </a>
+	    </li>
+	    <li>
+	      <a class="{% if p == 'system' %}selected{% endif %}" href="">
+		<img class="menu-img" src="{{ url_for('static', filename='7_64_4.png') }}" alt="">
+	      </a>
+	    </li>
+	    <li>
+	      <a class="{% if p == 'bug' %}selected{% endif %}" href="">
+		<img class="menu-img" src="{{ url_for('static', filename='9_64_10.png') }}" alt="">
+	      </a>
+	    </li>
+	    <li>
+		<a class="{% if p == 'donate' %}selected{% endif %}" href="{{ url_for('donate.donate') }}">
+		<img class="menu-img" src="{{ url_for('static', filename='6_64_4.png') }}" alt="">
+	      </a>
+	    </li>
+	  </ul>
+	</nav>
+      </header>
+      <div class="main">
+	<div><h1 class="corp">方舟工业<span class="en-name blocked"><span class="ark">Ark</span><span class="industry">Industry</span></span><span class="short blocked">ARKET</span></h1></div>
+	<main class="content">{% block main %}{% endblock %}</main>
+      </div>
+      {% block footer %}
+      <footer>
+        <p>方舟工业，我们创造一切</p>
+        <p class="eve-decl">EVE Online is a free MMORPG where you can embark on your own unique space adventure. EVE's open world MMORPG sandbox, renowned among online space games, lets you choose your own path and engage in combat, exploration, industry and much more. Play the world's #1 space MMO today!</p>
+        <p><a href="https://eve.163.com">EVE Online 官方网站</a></p>
+        <p><a href="">GITHUB</a> • <a href="">网站备案</a></p>
+	<p>Copyright © eve-arkindustry.net <span id="copyrDate"></span></p>
+      </footer>
+      {% endblock %}
+    </div>
+    {% block scripts %}
+    <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='less.min.js') }}"></script>
+    <script>
+      date = new Date()
+      year = date.getFullYear()
+      copyr = "2020"
+      if (year > 2020)
+	copyr = "2020-" + year
+      $("#copyrDate").text(copyr)
+    </script>
+    {% endblock %}
+    {% endblock %}
+  </body>
+</html>

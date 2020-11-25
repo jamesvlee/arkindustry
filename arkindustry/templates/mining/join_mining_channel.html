@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+{% set back_url = url_for('mining.mining_channels') %}
+{% block title %}加入矿队频道{% endblock %}
+{% block main %}
+<h2>加入矿队频道</h2>
+<form novalidate class="space-form" action="" method="post">
+  {{ form.csrf_token }}
+  {{ form.name.label }} {{ form.name }}
+  <br>
+  {% for error in form.name.errors %}
+  &emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
+  <br>
+  {% endfor %}
+  {{ form.code.label }}&nbsp; {{ form.code }}
+  <br>
+  {% for error in form.code.errors %}
+  &emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
+  <br>
+  {% endfor %}
+  {% if error_msg %}
+  &emsp;&emsp;&emsp; <span class="err">{{ error_msg }}</span>
+  <br>
+  {% endif %}
+  <input type="submit" value="加入">
+</form>
+{% endblock %}

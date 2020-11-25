@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% block title %}服务器错误{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='error.less') }}">
+{% endblock %}
+{% block main %}
+<h2>500：服务器错误</h2>
+<p>服务器发生了一个错误，请检查您的操作。</p>
+{% endblock %}

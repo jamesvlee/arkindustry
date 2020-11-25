@@ -1,0 +1,26 @@
+{% set p = 'guide' %}
+{% extends "layout.html" %}
+{% block title %}欢迎！{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='guide.less') }}"> 
+{% endblock %}
+{% block main %}
+<div class="aura">
+  <img src="{{ url_for('static', filename='aura.png') }}" alt="">
+</div>
+<div class="welcome">
+  <p>欢迎来到方舟工业！</p>
+  <p>我是奥拉。</p>
+  <p>请尽情使用该网站。</p>
+</div>
+<div class="funcs">
+  <p>目前已有功能：</p>
+  <ul>
+    <li><a href="{{ url_for('mining.mining_channels') }}">矿队系统</a></li>
+    <li><a href="{{ url_for('market.type_search') }}">市场查询</a></li>
+    <li><a href="{{ url_for('contract.value_calculate') }}">物品估值</a></li>
+    <li><a href="{{ url_for('donate.donate') }}">网站捐助</a></li>
+  </ul>
+</div>
+{% endblock %}

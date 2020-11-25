@@ -1,0 +1,27 @@
+{% set p = 'mining' %}
+{% set back_url = url_for('mining.mining_fleets', channel_short=channel_short) %}
+{% extends 'layout.html' %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='create_mining_fleet.less') }}">
+{% endblock %}
+{% block title %}创建矿队{% endblock %}
+{% block main %}
+<h2>创建矿队</h2>
+<form novalidate class="space-form" action="" method="post">
+  {{ form.csrf_token }}
+  {{ form.locations.label }} {{ form.locations }}
+  <br>
+  &emsp;&emsp;&emsp;&emsp; <span class="prompt">多个星系用空格分隔</span>
+  {% for error in form.locations.errors %}
+  <br>
+  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
+  {% endfor %}
+  {% if error_msg %}
+  <br>
+  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error_msg }}</span>
+  {% endif %}
+  <br>
+  <input type="submit" value="创建">
+</form>
+{% endblock %}

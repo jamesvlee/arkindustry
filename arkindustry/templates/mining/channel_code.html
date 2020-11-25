@@ -1,0 +1,27 @@
+{% set p = 'mining' %}
+{% if opt == 'refresh' %}
+{% set back_url = url_for('mining.manage_channel', channel_short=channel_short) %}
+{% elif opt == 'check' %}
+{% set back_url = url_for('mining.mining_channels', channel_short=channel_short) %}
+{% endif %}
+{% extends 'layout.html' %}
+{% block title %}频道信息{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='channel_code.less') }}">
+{% endblock %}
+{% block main %}
+<h2>频道信息</h2>
+<div class="prompt">
+  {% if prompt_msg %}
+  <span class="refresh_success">{{ prompt_msg }}</span>
+  {% else %}
+  <span>请将以下信息复制给您要添加的频道成员</span>
+  {% endif %}
+</div>
+<div class="channel_code">
+  <span class="blocked">频道名:&emsp;<span class="name">{{ channel.name }}</span></span>
+  <br>
+  <span class="blocked">&nbsp;PIN码:&emsp;<span class="code">{{ channel.code }}</span></span>
+</div>
+{% endblock %}

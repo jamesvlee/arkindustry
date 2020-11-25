@@ -1,0 +1,36 @@
+@import "layout.less";
+
+.fleets {
+  li {
+    font-size: @space-m-font-size;
+    margin: 18px 0;
+    a {
+      color: @space-gray;
+      .created {
+	color: @space-white;
+	font-weight: bold;
+      }
+      .createdby {
+        color: @space-yellow;	
+	font-weight: bold;
+      }
+      .location {
+        color: @space-white;
+	font-weight: bold;
+      }
+      .prompt {
+        font-size: @space-xs-font-size;
+	font-weight: bold;
+      }
+      .uploading {
+        color: @space-red;
+      }
+      .settling {
+        color: @space-green;
+      }
+      .closed {
+        color: @space-yellow;
+      }
+    }
+  }
+}

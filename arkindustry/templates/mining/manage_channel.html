@@ -1,0 +1,56 @@
+{% set p = 'mining' %}
+{% set back_url = url_for('mining.mining_channels') %}
+{% extends 'layout.html' %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='manage_channel.less') }}">
+{% endblock %}
+{% block title %}管理频道{% endblock %}
+{% block main %}
+<span class="blocked">
+  <a class="button space-button-white" href="{{ url_for('mining.refresh_code', channel_short=channel.short) }}">更新PIN码</a>
+</span>
+&nbsp;
+<span class="blocked">
+  <a class="button space-button-white" href="{{ url_for('mining.delete_channel', channel_short=channel.short) }}">注销频道</a>
+</span>
+<ul class="members list">
+  {% for m in channel.members %}
+  <li>
+    <a class="member button-like" href="javascript:return false;">{{ m.nickname }}</a>
+    {% if m == channel.createdby %}
+    <span class="creator blocked button-like">频道创建者</span>
+    {% endif %}
+    {% if m != channel.createdby %}
+    <span class="blocked">
+      <form action="" method="post" name="moveOut{{ m.id }}">
+        <input type="hidden" name="func" value="del_member">
+        <input type="hidden" name="member_id" value="{{ m.id }}">
+    	<input type="hidden" name="channel_short" value="{{ channel.short }}">
+        <a class="move-out blocked button-like" href="" onclick="document.moveOut{{ m.id }}.submit();return false;">[移出]</a>
+      </form>
+    </span>
+    {% endif %}
+    {% if m != channel.createdby and m not in channel.captains %}
+    <span class="blocked">
+      <form action="" method="post" name="setCapt{{ m.id }}">
+        <input type="hidden" name="func" value="set_capt">
+        <input type="hidden" name="member_id" value="{{ m.id }}">
+    	<input type="hidden" name="channel_short" value="{{ channel.short }}">
+	<a class="set-capt blocked button-like" href="" onclick="document.setCapt{{ m.id }}.submit();return false;">[设为舰队长]</a>
+      </form>
+    </span>
+    {% elif m != channel.createdby and m in channel.captains %}
+    <span class="blocked">
+      <form action="" method="post" name="rmCapt{{ m.id }}">
+        <input type="hidden" name="func" value="rm_capt">
+	<input type="hidden" name="member_id" value="{{ m.id }}">
+    	<input type="hidden" name="channel_short" value="{{ channel.short }}">
+	<a class="rm-capt blocked button-like" href="" onclick="document.rmCapt{{ m.id }}.submit();return false;">[取消舰队长]</a>
+      </form>
+    </span>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

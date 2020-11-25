@@ -1,0 +1,44 @@
+{% set p = 'reg' %}
+{% extends 'layout.html' %}
+{% block title %}注册角色{% endblock %}
+{% block main %}
+<h2>注册角色</h2>
+<form novalidate class="space-form" action="" method="post">
+  {{ form.csrf_token }}
+  {{ form.nickname.label }}&emsp; {{ form.nickname }}
+  <br>
+  &emsp;&emsp;&emsp;&emsp; <span class="prompt">请填写和游戏角色一致的名称</span>
+  <br>
+  {% for error in form.nickname.errors %}
+  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
+  <br>
+  {% endfor %}
+  {% if error_msg %}
+  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error_msg }}</span>
+  <br>
+  {% endif %}
+  {{ form.email.label }}&emsp;&emsp; {{ form.email }}
+  <br>
+  &emsp;&emsp;&emsp;&emsp; <span class="prompt">邮箱用来登录和修改密码</span>
+  <br>
+  {% for error in form.email.errors %}
+  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
+  <br>
+  {% endfor %}
+  {{ form.password.label }}&emsp;&emsp; {{ form.password }}
+  <br>
+  &emsp;&emsp;&emsp;&emsp; <span class="prompt">建议不要使用游戏账号的密码</span>
+  <br>
+  {% for error in form.password.errors %}
+  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
+  <br>
+  {% endfor %}
+  {{ form.repassword.label }} {{ form.repassword }}
+  <br>
+  {% for error in form.repassword.errors %}
+  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
+  <br>
+  {% endfor %}
+  <input type="submit" value="注册">
+</form>
+{% endblock %}

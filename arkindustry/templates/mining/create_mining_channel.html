@@ -1,0 +1,25 @@
+{% set p = 'mining' %}
+{% set back_url = url_for('mining.mining_channels') %}
+{% extends 'layout.html' %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='create_mining_channel.less') }}">
+{% endblock %}
+{% block title %}创建矿队频道{% endblock %}
+{% block main %}
+<h2>创建矿队频道</h2>
+<form novalidate class="space-form" action="" method="post">
+  {{ form.csrf_token }}
+  {{ form.name.label }} {{ form.name }}
+  {% for error in form.name.errors %}
+  <br>
+  &emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
+  {% endfor %}
+  {% if error_msg %}
+  <br>
+  &emsp;&emsp;&emsp; <span class="err">{{ error_msg }}</span>
+  {% endif %}
+  <br>
+  <input type="submit" value="创建">
+</form>
+{% endblock %}

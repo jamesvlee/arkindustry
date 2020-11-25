@@ -1,0 +1,30 @@
+{% set p = 'mining' %}
+{% extends 'layout.html' %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='mining_channels.less') }}">
+{% endblock %}
+{% block title %}矿队频道{% endblock %}
+{% block main %}
+<a class="button space-button-white" href="{{ url_for('mining.create_m_channel') }}">创建频道</a>
+&nbsp;
+<a class="button space-button-white" href="{{ url_for('mining.join_m_channel') }}">加入频道</a>
+<ul class="channels list">
+  {% for c in channels %}
+  <li>
+    <a href="{{ url_for('mining.mining_fleets', channel_short=c.short) }}">
+      <span class="channel button-like">{{ c.name }}</span>
+      {% if member == c.createdby %}
+      <a href="{{ url_for('mining.manage_channel', channel_short=c.short) }}" class="button-like manage blocked">[管理]</a>
+      <a href="{{ url_for('mining.channel_code', channel_short=c.short) }}" class="button-like pin blocked">[查看PIN码]</a>
+      {% else %}
+      <form class="blocked" action="" method="post" name="q{{ c.short }}">
+        <input type="hidden" name="channel_short" value="{{ c.short }}">
+        <a href="javascript:document.q{{ c.short }}.submit();" class="button-like quit blocked">[退出]</a>
+      </form>
+      {% endif %}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

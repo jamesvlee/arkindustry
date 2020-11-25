@@ -1,0 +1,63 @@
+@import "layout.less";
+
+.space-form {
+  input[type="submit"] {
+    margin-bottom: 28px;
+  }
+}
+.err {
+  color: @space-red;
+  font-weight: bold;
+}
+.success {
+  color: @space-green;
+  font-size: @space-s-font-size;
+  font-weight: bold;
+}
+.tip {
+  color: @space-white;
+  font-size: @space-s-font-size;
+  font-weight: bold;
+  margin-bottom: 9px;
+}
+.title {
+  color: @space-white;
+  margin-top: 18px;
+  font-weight: bold;
+}
+.total_value, .detail {
+  font-size: @space-s-font-size;
+  color: @space-gray;
+  .prompt {
+    color: @space-gray;
+  }
+  .min-sell {
+    color: @space-red;
+    font-size: @space-m-font-size;
+  }
+  .max-buy {
+    color: @space-green;
+    font-size: @space-m-font-size;
+  }
+  li {
+    margin: 6px 0;
+    .name {
+      color: @space-white;
+    }
+    .sell {
+      color: @space-red;
+      font-size: @space-s-font-size;
+    }
+    .buy {
+      color: @space-green;
+      font-size: @space-s-font-size;
+    }
+    .count {
+      color: @space-white;
+      font-size: @space-m-font-size;
+    }
+  }
+  .total_price {
+    font-size: @space-m-font-size;
+  }
+}

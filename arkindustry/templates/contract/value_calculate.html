@@ -1,0 +1,52 @@
+{% set p = 'contract' %}
+{% set back_url = url_for('contract.value_calculate') %}
+{% extends 'layout.html' %}
+{% block title %}物品估值{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='value_calculate.less') }}">
+{% endblock %}
+{% block main %}
+<h2>物品估值</h2>
+{% if redirect %}
+<span class="tip blocked">您可以将该链接复制给其他人</span>
+<br>
+{% endif %}
+<label>上传合同数据或货柜扫描数据</label>
+<form novalidate class="space-form" action="" method="post">
+  <textarea name="cu"></textarea>
+  <br>
+  {% if error_msg %}
+  <span class="err">{{ error_msg }}</span>
+  <br>
+  {% endif %}
+  <input type="submit" value="上传">
+</form>
+{% if order %}
+<label style="margin-top: 0;" class="title">物品总价值</label>
+<ul class="total_value">
+  <li>
+    <span class="prompt">最低出售价</span>
+    <span><span class="min-sell blocked">{{ order.total_sell }}</span> ISK</span>
+  </li>
+  <li>
+    <span class="prompt">最高收购价</span>
+    <span><span class="max-buy blocked">{{ order.total_buy }}</span> ISK</span>
+  </li>
+</ul>
+<label class="title">物品明细</label>
+<ul class="detail">
+  {% for d in order.details %}
+  <li>
+    <span class="blocked"><span class="name blocked">{{ d.name}}</span> * <span class="count">{{ d.count }}</span></span>
+    &nbsp;
+    <span class="blocked">
+      <span class="blocked"><span class="sell">{{ d.sell }}</span> ISK</span>
+      &nbsp;
+      <span class="blocked"><span class="buy">{{ d.buy }}</span> ISK</span>
+    </span>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

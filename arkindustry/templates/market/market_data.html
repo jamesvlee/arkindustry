@@ -1,0 +1,105 @@
+{% set p = 'market' %}
+{% set back_url = url_for('market.type_search') %}
+{% extends 'layout.html' %}
+{% block title %}市场数据{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='market_data.less') }}">
+{% endblock %}
+{% block main %}
+<form novalidate class="space-form" action="" method="post">
+  {{ form.csrf_token }}
+  {{ form.item_name.label }} {{ form.item_name }}
+  <br>
+  &emsp;&emsp;&emsp;&emsp; <span class="prompt">如：伊甸币</span>
+  <br>
+  {% for error in form.item_name.errors %}
+  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
+  <br>
+  {% endfor %}
+  {% if error_msg %}
+  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error_msg }}</span>
+  <br>
+  {% endif %}
+  <input type="submit" value="查询">
+</form>
+<p class="hide-info"><span>提示：为了适应小屏幕该网站隐藏了一些数据</span></p>
+<p class="item-info"><span class="item-name">{{ item.name }}</span></p>
+<p class="sellorbuy">
+  <a class="show-sell gray" href="#sell">出售数据</a>
+  &nbsp;
+  <a class="show-buy" href="#buy">求购数据</a>
+</p>
+<a name="sell" class="sell-prompt">{{ item.name }}出售数据</a>
+{% if not market.sell_orders %}
+<p class="no-data"><span>没有出售数据</span></p>
+{% else %}
+<table class="sell-orders">
+  <thead>
+    <tr>
+      <th class="first hidden-phone hidden-tablet">星域</th>
+      <th class="hidden-phone">数量</th>
+      <th class="first-on-phone">价格</th>
+      <th class="last-on-phone">地点</th>
+      <th class="hidden-phone">到期</th>
+      <th class="last-data hidden-phone">上传时间</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in market.sell_orders %}
+    <tr{% if loop.index % 2 == 0 %} class="highlight"{% endif %}>
+      <td class="first hidden-phone nowrap hidden-tablet txtgray">{{ order.region }}</td>
+      <td class="hidden-phone nowrap txttoright">{{ order.quantity }}</td>
+      <td class="first-on-phone nowrap price txttoright">{{ order.price }} ISK</td>
+      <td class="last-on-phone location"><span class="sec{% if order.security <= 0 %}00{% elif order.security == 0.1 %}01{% elif order.security == 0.2 %}02{% elif order.security == 0.3 %}03{% elif order.security == 0.4 %}04{% elif order.security == 0.5 %}05{% elif order.security == 0.6 %}06{% elif order.security == 0.7 %}07{% elif order.security == 0.8 %}08{% elif order.security == 0.9 %}09{% elif order.security == 1.0 %}10{% endif %}">{{ order.security }}</span><span class="txtgray">{{ order.station }}</span></td>
+      <td class="hidden-phone nowrap txttoright">{{ moment(order.expires_in).fromNow() }}</td>
+      <td class="hidden-phone nowrap txttoright txtgray last-data">{{ moment(order.received_at).fromNow() }}</td>
+    </tr>
+    {% endfor %}
+  <tbody>
+</table>
+{% endif %}
+<p class="sellorbuy">
+  <a class="show-sell" href="#sell">出售数据</a>
+  &nbsp;
+  <a class="show-buy gray" href="#buy">求购数据</a>
+</p>
+<a name="buy" class="buy-prompt">{{ item.name }}求购数据</a>
+{% if not market.buy_orders %}
+<p class="no-data"><span>没有求购数据</span></p>
+{% else %}
+<table class="buy-orders">
+  <thead>
+    <tr>
+      <th class="first hidden-phone hidden-tablet">星域</th>
+      <th class="hidden-phone">数量</th>
+      <th class="first-on-phone">价格</th>
+      <th class="last-on-phone">地点</th>
+      <th class="hidden-phone">范围</th>
+      <th class="hidden-phone nowrap">最小成交</th>
+      <th class="hidden-phone">到期</th>
+      <th class="last-data hidden-phone">上传时间</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in market.buy_orders %}
+    <tr{% if loop.index % 2 == 0 %} class="highlight"{% endif %}>
+      <td class="first hidden-phone nowrap hidden-tablet txtgray">{{ order.region }}</td>
+      <td class="hidden-phone nowrap txttoright">{{ order.quantity }}</td>
+      <td class="first-on-phone nowrap price txttoright">{{ order.price }} ISK</td>
+      <td class="last-on-phone location"><span class="sec{% if order.security <= 0 %}00{% elif order.security == 0.1 %}01{% elif order.security == 0.2 %}02{% elif order.security == 0.3 %}03{% elif order.security == 0.4 %}04{% elif order.security == 0.5 %}05{% elif order.security == 0.6 %}06{% elif order.security == 0.7 %}07{% elif order.security == 0.8 %}08{% elif order.security == 0.9 %}09{% elif order.security == 1.0 %}10{% endif %}">{{ order.security }}</span><span class="txtgray">{{ order.station }}</span></td>
+      <td class="hidden-phone nowrap txttoright">{% if order.range == 65535 %}星域{% elif order.range == 32767 %}恒星系{% elif order.range == 0 %}空间站{% else %}{{ order.range }}跳{% endif %}</td>
+      <td class="hidden-phone nowrap txttoright">{{ order.min_volume }}</td>
+      <td class="hidden-phone nowrap txttoright">{{ moment(order.expires_in).fromNow() }}</td>
+      <td class="hidden-phone nowrap txttoright txtgray last-data">{{ moment(order.received_at).fromNow() }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+  {{ moment.include_moment(local_js=url_for('static', filename='moment-with-locales.min.js')) }}
+  {{ moment.locale('zh-cn') }}
+{% endblock %}

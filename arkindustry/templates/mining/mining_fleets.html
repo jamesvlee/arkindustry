@@ -1,0 +1,47 @@
+{% set p = 'mining' %}
+{% set back_url = url_for('mining.mining_channels') %}
+{% extends 'layout.html' %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='mining_fleets.less') }}">
+{% endblock %}
+{% block title %}矿队{% endblock %}
+{% block main %}
+<a class="button space-button-white" href="{{ url_for('mining.mining_channels') }}">切换频道</a>
+{% if is_creator or is_captain %}
+&nbsp;
+<a class="button space-button-white" href="{{ url_for('mining.create_m_fleet', channel_short=channel_short) }}">创建矿队</a>
+{% endif %}
+<ul class="fleets list">
+  {% for f in fleets %}
+  <li>
+    <a href="{{ url_for('mining.productions', channel_short=channel_short, fleet_short=f.short) }}">
+      矿队由
+      <span class="createdby blocked">{{ f.createdby.nickname }}</span>
+      于
+      <span class="created blocked">{{ moment(f.created).fromNow() }}</span>
+      <span class="blocked">
+        在
+        {% for sys in f.systems %}
+        <span class="location blocked">{{ sys.name }}</span>
+        {% endfor %}
+        星系创建
+      </span>
+      {% if f.usage.status == UPLOADING %}
+      <span class="prompt uploading blocked">上传中...</span>
+      {% elif f.usage.status == SETTLING %}
+      <span class="prompt settling blocked">结算中...</span>
+      {% elif f.usage.status == CLOSED %}
+      <span class="prompt closed blocked">已收工！</span>
+      {% endif %}
+      </span>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}
+{% block scripts %}
+  {{ super() }}
+  {{ moment.include_moment(local_js=url_for('static', filename='moment-with-locales.min.js')) }}
+  {{ moment.locale('zh-cn') }}
+{% endblock %}

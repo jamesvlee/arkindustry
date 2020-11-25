@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% block title %}邮件已发送{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='please_check_your_email.less') }}">
+{% endblock %}
+{% block main %}
+<h2>一封邮件已发送到您的邮箱</h2>
+<p>请检查您的邮箱，并访问邮件中的链接修改密码。</p>
+{% endblock %}

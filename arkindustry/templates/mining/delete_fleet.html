@@ -1,0 +1,18 @@
+{% set p = 'mining' %}
+{% set back_url = url_for('mining.productions', channel_short=channel_short, fleet_short=fleet_short) %}
+{% extends 'layout.html' %}
+{% block title %}注销矿队{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='delete_fleet.less') }}">
+{% endblock %}
+{% block main %}
+<div class="prompt">
+  <span>您一定要删除该矿队码？</span>
+</div>
+<form action="" method="post" name="del">
+  <a class="button space-button-red blocked" href="javascript:document.del.submit();">确认</a>
+</form>
+&nbsp;
+<a class="button space-button-white blocked" href="{{ url_for('mining.mining_fleets', channel_short=channel_short, fleet_short=fleet_short) }}">取消</a>
+{% endblock %}
