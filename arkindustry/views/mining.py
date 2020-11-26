@@ -293,7 +293,6 @@ def productions(channel_short, fleet_short):
         item_prices = dict()
         ratio = float(osform.ore_ratio.data)
         Activity.objects(id=fleet.usage.id).update_one(set__prices_now=[])
-        ores = set()
         for p in fleet.usage.productions:
             for q in p.quantity:
                 ores.add(q.item_type.type_id)
