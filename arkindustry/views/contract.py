@@ -58,7 +58,7 @@ def look(short):
 
 
 def make_contract(cu):
-    data_list = cu.split('\n')
+    data_list = cu.strip().split('\n')
     total_buy = 0
     total_sell = 0
     order = dict()
