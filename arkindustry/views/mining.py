@@ -8,6 +8,7 @@ from flask_login import current_user, login_required
 
 import urllib3
 import json
+import datetime
 
 
 http = urllib3.PoolManager()
@@ -157,6 +158,8 @@ def mining_fleets(channel_short):
     is_creator = True if member == channel.createdby else False
     is_captain = True if member in channel.captains else False
     fleets = MiningChannel.objects.get(short=channel_short).fleets
+    for i, f in enumerate(fleets):
+        fleets[i].created = f.created + datetime.timedelta(hours=-8)
     return render_template('mining/mining_fleets.html', fleets=fleets[::-1], channel_short=channel_short, is_creator=is_creator, is_captain=is_captain)
 
 
@@ -316,6 +319,7 @@ def productions(channel_short, fleet_short):
     is_channel_member = False
     is_creator = False
     fleet = Fleet.objects.get(short=fleet_short)
+    fleet.created = fleet.created + datetime.timedelta(hours=-8)
     for i, p in enumerate(fleet.usage.prices_now):
         fleet.usage.prices_now[i].price = '{:,}'.format(p.price)
     for i, prod in enumerate(fleet.usage.productions):
