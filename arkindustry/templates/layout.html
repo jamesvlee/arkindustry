@@ -8,9 +8,14 @@
   <head>
     {% block head %}
     <meta charset="UTF-8">
+    <meta name="keywords" content="EVE工具, 方舟工业, 矿队系统, 市场查询, 合同估价, EVE Online">
+    <meta name="description" content="方舟工业为EVE Online玩家提供使用方便的游戏工具集，包括矿队系统、市场查询与物品估值等。">
+    <meta name="author" content="liyz">
+    <meta name="copyright" content="eve-arkindustry.net">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %}{% endblock %} - 方舟工业</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
     <link rel="stylesheet/less" href="{{ url_for('static', filename='layout.less') }}">
     {% endblock %}
@@ -27,9 +32,9 @@
 	      </a>
 	    </li>
 	    <li>
-		<a class="{% if p == 'character' %}selected{% endif %}" href="">
+	      <a href="javascript: void(0);">
 	        {% if g.user.nickname %}
-	        <a class="character" href="javascript: void(0);">
+	        <a class="character{% if p == 'character' %} selected{% endif %}" href="{{ url_for('character.character') }}">
 	        {{ g.user.nickname }}
 		</a>
                 {% else %}
@@ -101,9 +106,9 @@
       <footer>
         <p>方舟工业，我们创造一切</p>
         <p class="eve-decl">EVE Online is a free MMORPG where you can embark on your own unique space adventure. EVE's open world MMORPG sandbox, renowned among online space games, lets you choose your own path and engage in combat, exploration, industry and much more. Play the world's #1 space MMO today!</p>
-        <p><a href="https://eve.163.com">EVE Online 官方网站</a></p>
-        <p><a href="">GITHUB</a> • <a href="">网站备案</a></p>
-	<p>Copyright © eve-arkindustry.net <span id="copyrDate"></span></p>
+        <p><a href="https://evepc.163.com">EVE Online 官方网站</a></p>
+        <p><a href="https://github.com/jamesvlee/arkindustry">GITHUB</a> • <a href="">网站备案</a></p>
+	<p>Copyright © eve-arkindustry.net <span id="copyrDate">{{ get_var() }}</span></p>
       </footer>
       {% endblock %}
     </div>
@@ -111,14 +116,6 @@
     <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='less.min.js') }}"></script>
-    <script>
-      date = new Date()
-      year = date.getFullYear()
-      copyr = "2020"
-      if (year > 2020)
-	copyr = "2020-" + year
-      $("#copyrDate").text(copyr)
-    </script>
     {% endblock %}
     {% endblock %}
   </body>

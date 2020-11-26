@@ -6,6 +6,33 @@ from flask_login import login_required, login_user, logout_user, current_user
 from arkindustry.util import ts, send_email
 from werkzeug.security import generate_password_hash
 
+import datetime
+
+
+global_var = [0]
+
+def set_var(var):
+    global_var[0] = var
+
+def get_var():
+    return global_var[0]
+
+def get_domain():
+    return app.config['DOMAIN']
+
+app.add_template_global(set_var, 'set_var')
+app.add_template_global(get_var, 'get_var')
+app.add_template_global(get_domain, 'get_domain')
+
+@app.before_request
+def cal__copyright():
+    year = datetime.datetime.now().year
+    started = app.config['STARTED']
+    copyright = str(started)
+    if year > started:
+        copyright = '2020-{}'.format(year)
+    set_var(copyright)
+
 
 @app.errorhandler(404)
 def not_found(e):

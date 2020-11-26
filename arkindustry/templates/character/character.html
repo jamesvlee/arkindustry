@@ -1,0 +1,11 @@
+{% set p = 'character' %}
+{% extends 'layout.html' %}
+{% block title %}账户{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='login.less') }}">
+{% endblock %}
+{% block main %}
+<a class="button space-button-white" href="{{ url_for('general.logout') }}">登出</a>
+{% endblock %}
+
