@@ -1,7 +1,7 @@
 STARTED = 2020
 DOMAIN = ''
 
-DEBUG = False
+DEBUG = True
 
 SECRET_KEY = ''
 
@@ -13,3 +13,8 @@ MAIL_USE_SSL = True
 MAIL_USERNAME = ''
 MAIL_DEFAULT_SENDER = ''
 MAIL_PASSWORD = ''
+
+DB_NAME = ''
+DB_USER = ''
+DB_PWD = ''
+DB_AUTHSRC = ''

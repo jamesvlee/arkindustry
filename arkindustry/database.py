@@ -1,6 +1,6 @@
 from mongoengine import *
 from datetime import datetime
-from arkindustry import login_manager
+from arkindustry import app, login_manager
 from bson.objectid import ObjectId
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -8,7 +8,11 @@ import random
 import string
 
 
-connect('arkindustry')
+connect(app.config['DB_NAME'],
+    username=app.config['DB_USER'],
+    password=app.config['DB_PWD'],
+    authentication_source=app.config['DB_AUTHSRC']
+)
 
 
 class RefiningOutput(EmbeddedDocument):

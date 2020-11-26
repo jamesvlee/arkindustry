@@ -16,6 +16,7 @@ moment.init_app(app)
 
 mail = Mail(app)
 
+
 from arkindustry.views import general,character, mining, market, contract, donate
 app.register_blueprint(general.mod)
 app.register_blueprint(character.mod)
