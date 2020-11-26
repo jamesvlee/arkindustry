@@ -115,9 +115,9 @@ def get_fleet_by_fleet_id(fleet_id):
 
 
 def create_mining_fleet(createdby, systems):
-    mining = Mining(productions=[], prices_now=[]).save()
+    mining = Mining(created=datetime.now(), productions=[], prices_now=[]).save()
     short = ''.join(random.sample(string.ascii_letters + string.digits, 7))
-    mining_fleet = MiningFleet(createdby=createdby, short=short, systems=systems, members=[], usage=mining)
+    mining_fleet = MiningFleet(created=datetime.now(), createdby=createdby, short=short, systems=systems, members=[], usage=mining)
     return mining_fleet.save()
 
 
@@ -154,7 +154,7 @@ class MiningChannel(Channel):
 def create_mining_channel(name, member):
     code = '{0:04d}'.format(random.randint(0, 9999))
     short = ''.join(random.sample(string.ascii_letters + string.digits, 7))
-    channel = MiningChannel(name=name, code=code, short=short, createdby=member, members=[], fleets=[], captains=[member])
+    channel = MiningChannel(created=datetime.now(), name=name, code=code, short=short, createdby=member, members=[], fleets=[], captains=[member])
     return channel.save()
 
 
@@ -220,7 +220,7 @@ def load_member(member_id):
 
 
 def create_member(email, nickname, password):
-    member = Member(email=email, nickname=nickname, password=generate_password_hash(password), mining_channels=[])
+    member = Member(email=email, nickname=nickname, password=generate_password_hash(password), joined=datetime.now(), mining_channels=[])
     return member.save()
 
 
