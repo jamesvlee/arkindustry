@@ -68,6 +68,7 @@ def make_contract(cu):
         if data:
             d_list = data.strip().split()
             for i, d in enumerate(d_list):
+                has_got = False
                 try:
                     if float(d):
                         if i == 1:
@@ -76,20 +77,24 @@ def make_contract(cu):
                             quan = int(d)
                             if item_type:
                                 items_quans.append((item, quan))
+                                has_got = True
                         if i > 1:
                             item = d_list[0] + ' ' + d_list[1]
                             item_type = UniverseType.objects(name=item).first()
                             quan = int(d)
                             if item_type:
                                 items_quans.append((item, quan))
+                                has_got = True
+                    if has_got:
+                        break;
                 except:
                     continue
     for item, quan in items_quans:
         item = UniverseType.objects(name=item).first()
         count = quan
         buy, sell = get_item_price(item.type_id)
-        buy = float(buy)
-        sell = float(sell)
+        buy = round(float(buy), 2)
+        sell = round(float(sell), 2)
         buy_price = buy * count
         sell_price = sell * count
         price = dict()
