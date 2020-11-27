@@ -222,28 +222,41 @@ def productions(channel_short, fleet_short):
     fleet = Fleet.objects.get(short=fleet_short)
     if request.method == 'POST' and request.form['func'] == 'off':
         Activity.objects(id=fleet.usage.id).update_one(set__status=CLOSED)
-    if request.method == 'POST' and fleet.usage.status == UPLOADING and request.form['func'] == 'upload':
+    if request.method == 'POST' and fleet.usage.status == UPLOADING and request.form['func'] == 'upload': 
         try:
-            colume = 8
-            pur = request.form['pur'].split()[colume:]
+            pur = request.form['pur']
+            pur = pur.strip().replace(',', '').replace('m³', '').replace('星币', '')
+            pur = pur.split('\r\n')
+            if '时间点' in pur[0]:
+                pur = pur[1:]
             total_volume = 0
             prod = Production(member=member)
-            for i in range(int(len(pur)/colume)):
-                line = pur[colume*i:colume*i+8]
-                TYPE_ID = 6
-                SYSTEM_ID = 7
-                QUANTITY = 2
-                VOLUME = 3
-                type_id = int(line[TYPE_ID])
-                system_id = int(line[SYSTEM_ID])
-                quan = int(line[QUANTITY])
-                volume = float(line[VOLUME])
-                system = UniverseType.objects.get(type_id=system_id)
-                if system in fleet.systems:
-                    item_type = UniverseType.objects.get(type_id=type_id)
-                    quantity = MiningQuantity(item_type=item_type, quantity=quan, volume=volume)
-                    prod.quantity.append(quantity)
-                    total_volume += volume
+            quans_vols = dict()
+            for pu in pur:
+                if pu:
+                    p = pu.split()
+                    time = p[0]
+                    item_name = p[1]
+                    quantity = int(p[2])
+                    volume = float(p[3])
+                    system_name = p[5]
+                    system = UniverseType.objects.get(name=system_name)
+                    if system in fleet.systems:
+                        item_type = UniverseType.objects.get(name=item_name)
+                        if item_type:
+                            if item_name in quans_vols:
+                                quan, vol = quans_vols[item_name]
+                                quan += quantity
+                                vol += volume
+                                quans_vols[item_name] = (quan, vol)
+                            else:
+                                quans_vols[item_name] = (quantity, volume)
+            for item_name, (quan, vol) in quans_vols.items():
+                item_type = UniverseType.objects.get(name=item_name)
+                quantity = MiningQuantity(item_type=item_type, quantity=quan, volum=round(vol, 2))
+                prod.quantity.append(quantity)
+                total_volume += vol
+            total_volume = round(total_volume, 2)
             prod.total_volume = total_volume
             if not prod.quantity:
                 raise ValueError()
@@ -256,9 +269,9 @@ def productions(channel_short, fleet_short):
                 fleet.members.append(member)
             if fleet.save():
                 error_msg = '上传成功'
-        except ValueError:
+        except ValueError as e:
             error_msg = '似乎没有有效数据'
-        except Exception:
+        except Exception as e:
             error_msg = '上传失败，请复制正确的采矿明细'
     if msform.validate_on_submit():
         item_prices = dict()
@@ -293,6 +306,7 @@ def productions(channel_short, fleet_short):
         item_prices = dict()
         ratio = float(osform.ore_ratio.data)
         Activity.objects(id=fleet.usage.id).update_one(set__prices_now=[])
+        ores = set()
         for p in fleet.usage.productions:
             for q in p.quantity:
                 ores.add(q.item_type.type_id)

@@ -58,44 +58,53 @@ def look(short):
 
 
 def make_contract(cu):
-    data_list = cu.strip().split('\n')
+    data_list = cu.strip().replace(',', '').split('\r\n')
     total_buy = 0
     total_sell = 0
     order = dict()
     details = list()
-    try:
-        for data in data_list:
-            s = data.replace(',', '').split()
-            item = s[0]
-            num = s[1]
-            try:
-                float(s[2])
-                item = s[0] + ' ' + s[1]
-                num = s[2]
-            except:
-                pass
-            item = UniverseType.objects(name=item).first()
-            count = int(num)
-            buy, sell = get_item_price(item.type_id)
-            buy = float(buy)
-            sell = float(sell)
-            buy_price = buy * count
-            sell_price = sell * count
-            price = dict()
-            price['type_id'] = item.type_id
-            price['name'] = item.name
-            price['count'] = count
-            price['buy'] = buy_price
-            price['sell'] = sell_price
-            details.append(price)
-            total_buy += buy_price
-            total_sell += sell_price
-        if details:
-            order['total_buy'] = total_buy
-            order['total_sell'] = total_sell
-            order['details'] = details
-    except:
-        order = None
+    items_quans = list()
+    for data in data_list:
+        if data:
+            d_list = data.strip().split()
+            for i, d in enumerate(d_list):
+                try:
+                    if float(d):
+                        if i == 1:
+                            item = d_list[0]
+                            item_type = UniverseType.objects(name=item).first()
+                            quan = int(d)
+                            if item_type:
+                                items_quans.append((item, quan))
+                        if i > 1:
+                            item = d_list[0] + ' ' + d_list[1]
+                            item_type = UniverseType.objects(name=item).first()
+                            quan = int(d)
+                            if item_type:
+                                items_quans.append((item, quan))
+                except:
+                    continue
+    for item, quan in items_quans:
+        item = UniverseType.objects(name=item).first()
+        count = quan
+        buy, sell = get_item_price(item.type_id)
+        buy = float(buy)
+        sell = float(sell)
+        buy_price = buy * count
+        sell_price = sell * count
+        price = dict()
+        price['type_id'] = item.type_id
+        price['name'] = item.name
+        price['count'] = count
+        price['buy'] = buy_price
+        price['sell'] = sell_price
+        details.append(price)
+        total_buy += buy_price
+        total_sell += sell_price
+    if details:
+        order['total_buy'] = total_buy
+        order['total_sell'] = total_sell
+        order['details'] = details
     return order
 
 
