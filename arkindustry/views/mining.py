@@ -253,7 +253,7 @@ def productions(channel_short, fleet_short):
                                 quans_vols[item_name] = (quantity, volume)
             for item_name, (quan, vol) in quans_vols.items():
                 item_type = UniverseType.objects.get(name=item_name)
-                quantity = MiningQuantity(item_type=item_type, quantity=quan, volum=round(vol, 2))
+                quantity = MiningQuantity(item_type=item_type, quantity=quan, volume=round(vol, 2))
                 prod.quantity.append(quantity)
                 total_volume += vol
             total_volume = round(total_volume, 2)
