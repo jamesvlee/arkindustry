@@ -93,10 +93,10 @@ def make_contract(cu):
         item = UniverseType.objects(name=item).first()
         count = quan
         buy, sell = get_item_price(item.type_id)
-        buy = round(float(buy), 2)
-        sell = round(float(sell), 2)
-        buy_price = buy * count
-        sell_price = sell * count
+        buy = float(buy)
+        sell = float(sell)
+        buy_price = round(buy * count, 2)
+        sell_price = round(sell * count, 2)
         price = dict()
         price['type_id'] = item.type_id
         price['name'] = item.name
@@ -107,8 +107,8 @@ def make_contract(cu):
         total_buy += buy_price
         total_sell += sell_price
     if details:
-        order['total_buy'] = total_buy
-        order['total_sell'] = total_sell
+        order['total_buy'] = round(total_buy, 2)
+        order['total_sell'] = round(total_sell, 2)
         order['details'] = details
     return order
 
