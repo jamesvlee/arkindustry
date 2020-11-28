@@ -53,4 +53,7 @@
   </li>
   {% endfor %}
 </ul>
+{% if channel.members|length == 1 %}
+  <span class="prompt"><span class="blocked">该频道还没有其他成员，</span><span class="blocked">您可以将频道名和PIN码复制给其他人</span>
+{% endif %}
 {% endblock %}
