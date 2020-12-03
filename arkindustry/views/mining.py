@@ -219,10 +219,6 @@ def productions(channel_short, fleet_short):
     fleet = Fleet.objects.get(short=fleet_short)
     error_msg = None
     ac_error_msg = None
-    msform = MineralSettlementForm(request.form, prefix='msform', refining_ratio=fleet.usage.refining_ratio if fleet.usage.refining_ratio else 79.8, ratio=fleet.usage.ratio if fleet.usage.ratio else 95.0)
-    osform = OreSettlementForm(request.form, prefix='osform', ore_ratio=fleet.usage.ratio if fleet.usage.ratio else 95.0)
-    deform = DeductForm(request.form, prefix='deform', transport=fleet.usage.transport_deduct if fleet.usage.transport_deduct else 0, bonus=fleet.usage.bonus_deduct if fleet.usage.bonus_deduct else 0, fleet=fleet.usage.fleet_deduct if fleet.usage.fleet_deduct else 0)
-    acform = ActualVolumeForm(request.form, prefix='acform', actual_v=fleet.usage.actual_volume if fleet.usage.actual_volume else None)
     if request.method == 'POST' and request.form['func'] == 'off':
         Activity.objects(id=fleet.usage.id).update_one(set__status=CLOSED)
     if request.method == 'POST' and request.form['func'] == 'cancel_deduct':
@@ -283,6 +279,11 @@ def productions(channel_short, fleet_short):
         except Exception as e:
             pass
 
+    fleet = Fleet.objects.get(short=fleet_short)
+    msform = MineralSettlementForm(request.form, prefix='msform', refining_ratio=fleet.usage.refining_ratio if fleet.usage.refining_ratio else 79.8, ratio=fleet.usage.ratio if fleet.usage.ratio else 95.0)
+    osform = OreSettlementForm(request.form, prefix='osform', ore_ratio=fleet.usage.ratio if fleet.usage.ratio else 95.0)
+    deform = DeductForm(request.form, prefix='deform', transport=fleet.usage.transport_deduct if fleet.usage.transport_deduct else 0, bonus=fleet.usage.bonus_deduct if fleet.usage.bonus_deduct else 0, fleet=fleet.usage.fleet_deduct if fleet.usage.fleet_deduct else 0)
+    acform = ActualVolumeForm(request.form, prefix='acform', actual_v=fleet.usage.actual_volume if fleet.usage.actual_volume else None)
     if request.method == 'POST' and request.form['func'] == 'set_deduct' and deform.validate_on_submit():
         trans_de = round(float(deform.transport.data), 2)
         bonus_de = round(float(deform.bonus.data), 2)
