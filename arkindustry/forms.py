@@ -45,17 +45,31 @@ class MiningFleetForm(FlaskForm):
 
 
 class MineralSettlementForm(FlaskForm):
-    ratio = FloatField('结算比例', [validators.NumberRange(0, 100, message='比例必须大于0小于等于100'),
-                                    validators.DataRequired('需要输入结算比例')],
-                       default=95)
-    refining_ratio = FloatField('化矿比例', [validators.NumberRange(0, 100, message='比例必须大于0小于等于100'),
-                                             validators.DataRequired('需要输入化矿比例')], default=79)
+    refining_ratio = FloatField('化矿比例', [validators.NumberRange(0, 100, message='比例必须为0到100'),
+                                             validators.InputRequired('请输入正确的化矿比例'),
+                                             validators.DataRequired('请输入正确的化矿比例')])
+    ratio = FloatField('结算比例', [validators.NumberRange(0, 100, message='比例必须为0到100'),
+                                    validators.InputRequired('请输入正确的结算比例'),
+                                    validators.DataRequired('请输入正确的结算比例')])
 
 
 class OreSettlementForm(FlaskForm):
-    ore_ratio = FloatField('结算比例', [validators.NumberRange(0,100, message='比例必须大于0小于等于100'),
-                                    validators.DataRequired('需要输入结算比例')],
-                       default=95)
+    ore_ratio = FloatField('结算比例', [validators.NumberRange(0,100, message='比例必须为0到100'),
+                                    validators.InputRequired('请输入正确的结算比例'),
+                                    validators.DataRequired('请输入正确的结算比例')])
+
+
+class DeductForm(FlaskForm):
+    transport = FloatField('运输', [validators.NumberRange(0, 100, message='比例必须为0到100'),
+                                    validators.InputRequired('请输入正确的提成比例')])
+    bonus = FloatField('加成', [validators.NumberRange(0, 100, message='比例必须为0到100'),
+                                validators.InputRequired('请输入正确的提成比例')])
+    fleet = FloatField('矿队', [validators.NumberRange(0, 100, message='比例必须为0到100'),
+                                validators.InputRequired('请输入正确的提成比例')])
+
+
+class ActualVolumeForm(FlaskForm):
+    actual_v = FloatField('实际收矿', [validators.DataRequired('请输入正确的体积')])
 
 
 class ItemTypeForm(FlaskForm):

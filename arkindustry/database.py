@@ -91,6 +91,13 @@ class Mining(Activity):
     settlement = IntField()
     refining_ratio = FloatField()
     ratio = FloatField()
+    transport_deduct = FloatField()
+    bonus_deduct = FloatField()
+    fleet_deduct = FloatField()
+    upload_volume = FloatField()
+    actual_volume = FloatField()
+    lossing_rate = FloatField()
+    total_value = FloatField()
 
 
 class Fleet(Document):

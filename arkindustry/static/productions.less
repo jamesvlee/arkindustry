@@ -33,28 +33,28 @@
   }
   input[type="submit"].settle-button {
     margin-top: 0;
-    /*background-color: @space-green;*/
-    /*border-color: @space-green;*/
-    /*color: @space-white;*/
+  }
+  input[type="submit"].set-actual-v-button {
+    margin-top: 0;
   }
   input[type="submit"].off-button {
     margin-top: 0;
     margin-bottom: 0;
-    /*background-color: @space-yellow;*/
-    /*border-color: @space-yellow;*/
-    /*color: @space-black;*/
   }
 }
 .err {
   color: @space-red;
   font-weight: bold;
 }
+.actual-err {
+  color: @space-yellow;
+}
 .success {
   color: @space-green;
   font-size: @space-s-font-size;
   font-weight: bold;
 }
-.productions, .prices-now, .salaries {
+.productions, .prices-now, .summary, .salaries {
   color: @space-gray;
   li {
     margin: 6px 0;
@@ -75,16 +75,19 @@
   }
   .vol {
     color: @space-white;
+    font-size: @space-m-font-size;
   }
   .total-v {
     box-sizing: border-box;
     border: 0 solid #000;
-    color: @space-white;
+    color: @space-gray;
+    font-size: @space-s-font-size;
     margin-top: 12px;
     margin-bottom: 24px;
   }
   .price {
     color: @space-white;
+    font-size: @space-m-font-size;
   }
   .salary {
     color: @space-green;
@@ -94,26 +97,21 @@
     color: @space-yellow;
     font-size: @space-s-font-size;
   }
+  .deduct-getter {
+    color: @space-white;
+    font-size: @space-s-font-size;
+  }
 }
-.prices-now-title {
-  color: @space-white;
-  margin-top: 18px;
-  font-weight: bold;
-}
-.salaries-title {
-  /*color: @space-green;*/
+.product-title {
   color: @space-white;
   font-weight: bold;
+  margin-top: 19px;
 }
-.settlement-section {
-  /*border-left: 1px solid @space-green;*/
+.settlement-section, .deduct-section {
   border-left: 1px solid @space-white;
-  padding: 0;
-  padding-left: 9px;
-  padding-bottom: 5px;
+  padding: 0 0 5px 9px;
   margin-bottom:21px;
-  .settlement-way {
-    /*color: @space-green;*/
+  .settlement-way, .deduct-prompt {
     color: @space-white;
     font-size: @space-m-font-size;
     font-weight: bold;
@@ -126,14 +124,53 @@
     margin-bottom: 0;
   }
 }
+.settlement-section:last-of-type {
+  margin-bottom: 28px;
+}
+.deduct-section {
+  margin-bottom: 28px;
+}
+.actual-form {
+  input[type="text"] {
+    width: 117px;
+  }
+  input[type="submit"] {
+    margin-top: 9px;
+    margin-bottom: 28px;
+  }
+}
+.button-like {
+  font-size: @space-s-font-size;
+  color: @space-white;
+  font-weight: bold;
+}
 .settled-alert {
-  margin-top: 9px;
-  /*color: @space-yellow;*/
+  margin-top: 19px;
   color: @space-white;
   font-size: @space-s-font-size;
   font-weight: bold;
 }
+.settled-prompts {
+  margin-bottom: 28px;
+}
+.settled-prompt {
+  color: @space-yellow;
+  font-size: @space-s-font-size;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+.actual-alert, .actual-prompt {
+  margin: 0;
+  color: @space-yellow;
+  font-size: @space-s-font-size;
+  font-weight: bold;
+}
+.actual-prompt {
+  margin-bottom: 9px;
+  color: @space-white;
+}
 .off-alert {
   color: @space-yellow;
   font-size: @space-s-font-size;
+  font-weight: bold;
 }

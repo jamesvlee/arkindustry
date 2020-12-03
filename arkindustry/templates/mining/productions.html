@@ -55,7 +55,42 @@
     结算比例为
     <span class="num">{{ fleet.usage.ratio }}</span>
     %
+    {% if fleet.usage.lossing_rate %}
+    ，
+    <span class="blocked">
+      矿队损耗
+      <span class="num">{{ fleet.usage.lossing_rate }}</span>
+      %
+    </span>
+    {% else %}
+    ，
+    <span class="blocked">无矿队损耗</span>
+    {% endif %}
   </span>
+  <br>
+  {% if fleet.usage.transport_deduct %}
+  <span class="blocked">
+    运输提成
+    <span class="num">{{ fleet.usage.transport_deduct }}</span>
+    %
+  </span>
+  {% endif %}
+  {% if fleet.usage.bonus_deduct %}
+    {% if fleet.usage.transport_deduct %}，{% endif %}
+  <span class="blocked">
+    加成提成
+    <span class="num">{{ fleet.usage.bonus_deduct }}</span>
+    %
+  </span>
+  {% endif %}
+  {% if fleet.usage.fleet_deduct %}
+    {% if fleet.usage.transport_deduct or fleet.usage.bonus_deduct %}，{% endif %}
+  <span class="blocked">
+    矿队提成
+    <span class="num">{{ fleet.usage.fleet_deduct }}</span>
+    %
+  </span>
+  {% endif %}
 </p>
 {% endif %}
 {% if is_creator and fleet.usage.status != CLOSED and fleet.usage.productions|length > 0 %}
@@ -63,42 +98,110 @@
   <label class="settled-alert">对结算方式不满意？您可以重新结算</label>
   <br>
   {% endif %}
-<section class="settlement-section">
-  <label class="settlement-way">按矿物结算</label>
-  <form novalidate class="space-form" action="" method="post">
-    {{ msform.csrf_token }}
-    <input type="hidden" value="refining_and_settle" name="func">
-    {{ msform.refining_ratio.label }} {{ msform.refining_ratio }}%
-    {% for error in msform.refining_ratio.errors %}
-    <br>
-    &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error}}</span>
-    {% endfor %}
-    <br>
-    {{ msform.ratio.label }} {{ msform.ratio }}%
-    {% for error in msform.ratio.errors %}
-    <br>
-    &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error}}</span>
-    {% endfor %}
-    <br>
-    <input class="settle-button" type="submit" name="ms_submit" value="结算">
-  </form>
-</section>
-<section class="settlement-section">
-  <label class="settlement-way">按原矿结算</label>
-  <form novalidate class="space-form" action="" method="post">
-    {{ osform.csrf_token }}
-    <input type="hidden" value="ore_settle" name="func">
-    {{ osform.ore_ratio.label }} {{ osform.ore_ratio }}%
-    {% for error in osform.ore_ratio.errors %}
-    <br>
-    &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error}}</span>
-    {% endfor %}
-    <br>
-    <input class="settle-button" type="submit" name="os_submit" value="结算">
-  </form>
-</section>
+  <div>
+  <section class="settlement-section blocked"{% if fleet.usage.status == UPLOADING %} style="margin-top: 19px;"{% endif %}>
+    <label class="settlement-way">按矿物结算</label>
+    <form novalidate class="space-form" action="" method="post">
+      {{ msform.csrf_token }}
+      <input type="hidden" value="refining_and_settle" name="func">
+      {{ msform.refining_ratio.label }} {{ msform.refining_ratio }}%
+      {% for error in msform.refining_ratio.errors %}
+      <br>
+      &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
+      {% endfor %}
+      <br>
+      {{ msform.ratio.label }} {{ msform.ratio }}%
+      {% for error in msform.ratio.errors %}
+      <br>
+      &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
+      {% endfor %}
+      <br>
+      <input class="settle-button" type="submit" value="结算">
+    </form>
+  </section>
+  <section class="settlement-section"{% if fleet.usage.status == UPLOADING %} style="margin-bottom: 9px;"{% endif %}>
+    <label class="settlement-way">按原矿结算</label>
+    <form novalidate class="space-form" action="" method="post">
+      {{ osform.csrf_token }}
+      <input type="hidden" value="ore_settle" name="func">
+      {{ osform.ore_ratio.label }} {{ osform.ore_ratio }}%
+      {% for error in osform.ore_ratio.errors %}
+      <br>
+      &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
+      {% endfor %}
+      <br>
+      <input class="settle-button" type="submit" value="结算">
+    </form>
+  </section>
+  </div>
+  {% if fleet.usage.status == UPLOADING and fleet.usage.productions|length > 0 %}
+  <p class="settled-prompts">
+    <label class="settled-prompt blocked">进入结算前请确认上传数据，</label>
+    <label class="settled-prompt blocked">在结算中您可以设置更多</label>
+  </p>
+  {% endif %}
   {% if fleet.usage.status == SETTLING %}
-  <form novalidate style="margin-bottom: 10px;" class="space-form" action="" method="post">
+    {% if not fleet.usage.transport_deduct and not fleet.usage.bonus_deduct and not fleet.usage.fleet_deduct %}
+    {% endif %}
+    <section class="deduct-section">
+      <label class="deduct-prompt">设置额外提成</label>
+      <form novalidate class="space-form" action="" method="post">
+        {{ deform.csrf_token }}
+        <input type="hidden" value="set_deduct" name="func">
+        {{ deform.transport.label }} {{ deform.transport }}%
+        {% for error in deform.transport.errors %}
+	  {% if error != 'Not a valid float value' %}
+          <br>
+	  &emsp;&emsp; <span class="err">{{ error }}</span>
+	  {% endif %}
+        {% endfor %}
+        <br>
+        {{ deform.bonus.label }} {{ deform.bonus }}%
+        {% for error in deform.bonus.errors %}
+	  {% if error != 'Not a valid float value' %}
+          <br>
+	  &emsp;&emsp; <span class="err">{{ error }}</span>
+	  {% endif %}
+        {% endfor %}
+        <br>
+        {{ deform.fleet.label }} {{ deform.fleet }}%
+        {% for error in deform.fleet.errors %}
+	  {% if error != 'Not a valid float value' %}
+          <br>
+	  &emsp;&emsp; <span class="err">{{ error }}</span>
+	  {% endif %}
+        {% endfor %}
+        <br>
+        <input class="set-deduct-button" type="submit" value="设置">
+        <a class="cancel-de blocked button-like" href="" onclick="document.cancelDeduct.submit();return false;">取消设置</a>
+      </form>
+      <form class="cancel-de-form" action="" method="post" name="cancelDeduct">
+        <input type="hidden" name="func" value="cancel_deduct">
+      </form>
+    </section>
+  <label class="actual-alert">矿队遇到袭击？</label>
+  <br>
+  <label class="actual-prompt">您可以设置矿队实际收矿量</label>
+  <form novalidate class="space-form actual-form" action="" method="post">
+    {{ acform.csrf_token }}
+    <input type="hidden" value="set_actual" name="func">
+    {{ acform.actual_v.label }} {{ acform.actual_v }}m³
+    {% for error in acform.actual_v.errors %}
+    <br>
+    &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
+    {% endfor %}
+    {% if ac_error_msg %}
+    <br>
+    &emsp;&emsp;&emsp;&emsp; <span class="err actual-err">{{ ac_error_msg }}</span>
+    {% endif %}
+    <br>
+    <input class="set-actual-v-button" type="submit" value="设置">
+    <a class="cancel-ac blocked button-like" href="" onclick="document.cancelActual.submit();return false;">取消设置</a>
+  </form>
+  <form class="cancel-ac-form" action="" method="post" name="cancelActual">
+    <input type="hidden" name="func" value="cancel_actual">
+  </form>
+  <form novalidate style="margin-bottom: 9px;" class="space-form" action="" method="post">
     <input type="hidden" value="off" name="func">
     <input class="off-button" type="submit" value="收工">
     <br>
@@ -106,25 +209,25 @@
   </form>
   {% endif %}
 {% endif %}
-{% if is_channel_member and fleet.usage.status == UPLOADING %}
-<label>上传或更新个人当日采矿明细</label>
-<form novalidate class="space-form" action="" method="post">
-  <input type="hidden" value="upload" name="func">
-  <textarea name="pur"></textarea>
-  <br>
-  {% if error_msg %}
-    {% if error_msg == "上传成功" %}
-    <span class="success">{{ error_msg }}</span>
-    {% else %}
-    <span class="err">{{ error_msg }}</span>
+  {% if is_channel_member and fleet.usage.status == UPLOADING %}
+  <label>上传或更新个人当日采矿明细</label>
+  <form novalidate class="space-form" action="" method="post">
+    <input type="hidden" value="upload" name="func">
+    <textarea name="pur"></textarea>
+    <br>
+    {% if error_msg %}
+      {% if error_msg == "上传成功" %}
+      <span class="success">{{ error_msg }}</span>
+      {% else %}
+      <span class="err">{{ error_msg }}</span>
+      {% endif %}
+    <br>
     {% endif %}
-  <br>
+    <input type="submit" value="上传">
+  </form>
   {% endif %}
-  <input type="submit" value="上传">
-</form>
-{% endif %}
 {% if fleet.usage.status != UPLOADING %}
-<label class="prices-now-title">{% if fleet.usage.settlement == ORE %}当日原矿价格{% elif fleet.usage.settlement == MINERAL %}当日矿物价格{% endif %}</label>
+<label class="prices-now-title product-title">{% if fleet.usage.settlement == ORE %}当日原矿价格{% elif fleet.usage.settlement == MINERAL %}当日矿物价格{% endif %}</label>
 <ul class="prices-now">
   {% for price in fleet.usage.prices_now %}
   <li>
@@ -134,8 +237,34 @@
   </li>
   {% endfor %}
 </ul>
-<label class="salaries-title" style="margin-top: 18px;">工资明细</label>
-<ul class="salaries" style="margin-bottom: 18px;">
+<label class="summary-title product-title">矿队汇总</label>
+<ul class="summary">
+  <li>
+    <span>上传总体积</span>
+    <span class="blocked">
+      <span class="vol">{{ fleet.usage.upload_volume }}</span>
+      m³
+    </span>
+  </li>
+  {% if fleet.usage.actual_volume %}
+  <li>
+    <span>实际收矿量</span>
+    <span class="blocked">
+      <span class="vol">{{ fleet.usage.actual_volume }}</span>
+      m³
+    </span>
+  </li>
+  {% endif %}
+  <li>
+    <span>工资总支出</span>
+    <span class="blocked">
+      <span class="salary">{{ fleet.usage.total_value }}</span>
+      ISK
+    </span>
+  </li>
+</ul>
+<label class="salaries-title product-title">工资明细</label>
+<ul class="salaries" style="margin-bottom: 19px;">
   {% for prod in fleet.usage.productions %}
   <li>
     <span class="salary-getter">{{ prod.member.nickname }}</span>
@@ -144,6 +273,30 @@
     ISK
   </li>
   {% endfor %}
+  {% if trans_v %}
+  <li>
+    <span class="deduct-getter">运输</span>
+    获得
+    <span class="salary">{{ trans_v }}</span>
+    ISK
+  </li>
+  {% endif %}
+  {% if bonus_v %}
+  <li>
+    <span class="deduct-getter">加成</span>
+    获得
+    <span class="salary">{{ bonus_v }}</span>
+    ISK
+  </li>
+  {% endif %}
+  {% if fleet_v %}
+  <li>
+    <span class="deduct-getter">矿队</span>
+    获得
+    <span class="salary">{{ fleet_v }}</span>
+    ISK
+  </li>
+  {% endif %}
 </ul>
 {% endif %}
 <ul class="productions">
@@ -165,7 +318,7 @@
       </li>
       {% endfor %}
     </ul>
-    <p class="total-v">总体积: {{ p.total_volume }}m³</p>
+    <p class="total-v">总体积 <span class="vol">{{ p.total_volume }}</span> m³</p>
   </li>
   {% endfor %}
 </ul>
