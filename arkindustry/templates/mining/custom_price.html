@@ -1,0 +1,46 @@
+{% set p = 'mining' %}
+{% set back_url = url_for('mining.productions', channel_short=channel_short, fleet_short=fleet.short) %}
+{% extends 'layout.html' %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='custom_price.less') }}">
+{% endblock %}
+{% block title %}价格自定义{% endblock %}
+{% block main %}
+<h2>价格自定义</h2>
+<form novalidate class="space-form" action="" method="post">
+  <input type="hidden" name="func" value="set_prices">
+  <ul class="prices">
+    {% if fleet.usage.custom_prices %}
+      {% for p in fleet.usage.custom_prices %}
+      <li>
+        <span>{{ p.item_type.name }}</span>
+        &nbsp;
+	<input type="text" name="{{ p.item_type.type_id }}" value="{{ p.price }}">
+      </li>
+      <br>
+      {% endfor %}
+    {% else %}
+      {% for p in fleet.usage.prices_now %}
+      <li>
+        <span>{{ p.item_type.name }}</span>
+        &nbsp;
+	<input type="text" name="{{ p.item_type.type_id }}" value="{{ p.price }}">
+      </li>
+      <br>
+      {% endfor %}
+    {% endif %}
+  </ul>
+  <br>
+  {% if error_msg %}
+  <span class="err">{{ error_msg }}</span>
+  <br>
+  {% endif %}
+  <input type="submit" value="提交">
+  <a href="javascript: void(0);" class="button-like" onclick="document.resetPrices.submit(); return false;">重置全部</a>
+</form>
+<form action="" method="post" name="resetPrices">
+  <input type="hidden" name="func" value="reset_prices">
+</form>
+</ul>
+{% endblock %}

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, render_template, redirect, url_for, abort, jsonify
-from arkindustry.database import Member, Channel, MiningChannel, MiningFleet, Mining, Production, MiningQuantity, find_member, get_fleet_by_fleet_id, create_mining_channel, create_mining_fleet, UPLOADING, SETTLING, CLOSED, join_channel, UniverseType, Activity, MINERAL, ORE, PriceNow, Fleet
+from arkindustry.database import Member, Channel, MiningChannel, MiningFleet, Mining, Production, MiningQuantity, find_member, get_fleet_by_fleet_id, create_mining_channel, create_mining_fleet, UPLOADING, SETTLING, CLOSED, join_channel, UniverseType, Activity, MINERAL, ORE, PriceNow, CustomPrice, Fleet
 from arkindustry.forms import MiningChannelForm, MiningFleetForm, JoiningMiningChannelForm, MineralSettlementForm, OreSettlementForm, DeductForm, ActualVolumeForm
 from mongoengine import *
 from bson.objectid import ObjectId
@@ -313,7 +313,7 @@ def productions(channel_short, fleet_short):
         item_prices = dict()
         ratio = round(float(msform.ratio.data), 2)
         refining_ratio = round(float(msform.refining_ratio.data), 2)
-        Activity.objects(id=fleet.usage.id).update_one(set__prices_now=[])
+        Activity.objects(id=fleet.usage.id).update(set__prices_now=[], set__custom_prices=[])
         minerals = set()
         for p in fleet.usage.productions:
             for q in p.quantity:
@@ -325,29 +325,11 @@ def productions(channel_short, fleet_short):
         for k, v in item_prices.items():
             price_now = PriceNow(item_type=UniverseType.objects.get(type_id=k), price=v)
             Activity.objects(id=fleet.usage.id).update_one(push__prices_now=price_now)
-        fleet_upload_volume = 0
-        fleet_total_value = 0
-        for p in fleet.usage.productions:
-            total_value = 0;
-            for q in p.quantity:
-                coef = q.quantity // q.item_type.refining_input_q * refining_ratio / 100
-                mining = Activity.objects.get(id=fleet.usage.id)
-                for output in q.item_type.refining_output:
-                    for price in mining.prices_now:
-                        if price.item_type.type_id == output.item_type.type_id:
-                            value = float(price.price) * output.quantity * coef
-                            total_value += value
-            fleet_upload_volume += p.total_volume
-            total_value = round(total_value * ratio / 100, 2)
-            fleet_total_value += total_value
-            Production.objects(id=p.id).update_one(set__value=total_value)
-        fleet_total_value = round(fleet_total_value, 2)
-        fleet_upload_volume = round(fleet_upload_volume, 2)
-        Activity.objects(id=fleet.usage.id).update(set__status=SETTLING, set__settlement=MINERAL, set__refining_ratio=refining_ratio, set__ratio=ratio, set__upload_volume=fleet_upload_volume, set__total_value=fleet_total_value) 
+        Activity.objects(id=fleet.usage.id).update(set__status=SETTLING, set__settlement=MINERAL, set__refining_ratio=refining_ratio, set__ratio=ratio) 
     elif request.method == 'POST' and request.form['func'] == 'ore_settle' and osform.validate_on_submit():
         item_prices = dict()
         ratio = round(float(osform.ore_ratio.data), 2)
-        Activity.objects(id=fleet.usage.id).update_one(set__prices_now=[])
+        Activity.objects(id=fleet.usage.id).update(set__prices_now=[], set__custom_prices=[])
         ores = set()
         for p in fleet.usage.productions:
             for q in p.quantity:
@@ -358,29 +340,64 @@ def productions(channel_short, fleet_short):
         for k, v in item_prices.items():
             price_now = PriceNow(item_type=UniverseType.objects.get(type_id=k), price=v)
             Activity.objects(id=fleet.usage.id).update_one(push__prices_now=price_now)
+        Activity.objects(id=fleet.usage.id).update(set__status=SETTLING, set__settlement=ORE, set__ratio=ratio)
+    fleet = Fleet.objects.get(short=fleet_short)
+    if fleet.usage.settlement == MINERAL:
+        fleet_upload_volume = 0
+        fleet_total_value = 0
+        for p in fleet.usage.productions:
+            total_value = 0;
+            for q in p.quantity:
+                coef = q.quantity // q.item_type.refining_input_q * fleet.usage.refining_ratio / 100
+                mining = Activity.objects.get(id=fleet.usage.id)
+                for output in q.item_type.refining_output:
+                    prices = mining.prices_now
+                    if mining.custom_prices:
+                        prices = mining.custom_prices
+                    for price in prices:
+                        if price.item_type.type_id == output.item_type.type_id:
+                            value = float(price.price) * output.quantity * coef
+                            total_value += value
+            fleet_upload_volume += p.total_volume
+            total_value = round(total_value * fleet.usage.ratio / 100, 2)
+            fleet_total_value += total_value
+            Production.objects(id=p.id).update_one(set__value=total_value)
+        fleet_total_value = round(fleet_total_value, 2)
+        fleet_upload_volume = round(fleet_upload_volume, 2)
+        Activity.objects(id=fleet.usage.id).update(set__upload_volume=fleet_upload_volume, set__total_value=fleet_total_value)
+    elif fleet.usage.settlement == ORE:
         fleet_upload_volume = 0
         fleet_total_value = 0
         for p in fleet.usage.productions:
             total_value = 0;
             for q in p.quantity:
                 mining = Activity.objects.get(id=fleet.usage.id)
-                for price in mining.prices_now:
+                prices = mining.prices_now
+                if mining.custom_prices:
+                    prices = mining.custom_prices
+                for price in prices:
                     if price.item_type.type_id == q.item_type.type_id:
                         value = float(price.price) * q.quantity
                         total_value += value
             fleet_upload_volume += p.total_volume
-            total_value = round(total_value * ratio / 100, 2)
+            total_value = round(total_value * fleet.usage.ratio / 100, 2)
             fleet_total_value += total_value
             Production.objects(id=p.id).update_one(set__value=total_value)
         fleet_total_value = round(fleet_total_value, 2)
         fleet_upload_volume = round(fleet_upload_volume, 2)
-        Activity.objects(id=fleet.usage.id).update(set__status=SETTLING, set__settlement=ORE, set__ratio=ratio, set__upload_volume=fleet_upload_volume, set__total_value=fleet_total_value)
-
+        Activity.objects(id=fleet.usage.id).update(set__upload_volume=fleet_upload_volume, set__total_value=fleet_total_value)
 
     is_channel_owner = False
     is_channel_member = False
     is_creator = False
     fleet = Fleet.objects.get(short=fleet_short)
+    custom_count = 0
+    for p in fleet.usage.prices_now:
+        for cp in fleet.usage.custom_prices:
+            if p.item_type.type_id == cp.item_type.type_id and p.price != cp.price:
+                custom_count += 1
+    if custom_count == len(fleet.usage.prices_now):
+        custom_count = -1
     fleet.created = fleet.created + datetime.timedelta(hours=-8)
     if fleet.usage.upload_volume:
         fleet.usage.upload_volume = '{:,}'.format(fleet.usage.upload_volume)
@@ -388,6 +405,8 @@ def productions(channel_short, fleet_short):
         fleet.usage.actual_volume = '{:,}'.format(fleet.usage.actual_volume)
     for i, p in enumerate(fleet.usage.prices_now):
         fleet.usage.prices_now[i].price = '{:,}'.format(p.price)
+    for i, p in enumerate(fleet.usage.custom_prices):
+        fleet.usage.custom_prices[i].price = '{:,}'.format(p.price)
     reduced_fleet_total_value = 0
     for i, prod in enumerate(fleet.usage.productions):
         fleet.usage.productions[i].total_volume = '{:,}'.format(prod.total_volume)
@@ -431,18 +450,39 @@ def productions(channel_short, fleet_short):
             is_channel_member = True
         if member == fleet.createdby:
             is_creator = True
-    return render_template('mining/productions.html', fleet=fleet, trans_v=trans_v, bonus_v=bonus_v, fleet_v=fleet_v, channel_short=channel_short, is_channel_owner=is_channel_owner, is_channel_member=is_channel_member, is_creator=is_creator, error_msg=error_msg, msform=msform, osform=osform, deform=deform, acform=acform, ac_error_msg=ac_error_msg)
+    return render_template('mining/productions.html', fleet=fleet, trans_v=trans_v, bonus_v=bonus_v, fleet_v=fleet_v, custom_count=custom_count, channel_short=channel_short, is_channel_owner=is_channel_owner, is_channel_member=is_channel_member, is_creator=is_creator, error_msg=error_msg, msform=msform, osform=osform, deform=deform, acform=acform, ac_error_msg=ac_error_msg)
 
 
-@mod.route('/channel/<string:channel_short>/fleet/<string:fleet_short>/set_price', methods=['GET', 'POST'])
+@mod.route('/channel/<string:channel_short>/fleet/<string:fleet_short>/custom_price', methods=['GET', 'POST'])
 @login_required
-def set_item_price(channel_short, fleet_short):
+def custom_price(channel_short, fleet_short):
     member = Member.get_member(current_user.email)
     channel = MiningChannel.objects.get(short=channel_short)
     fleet = MiningFleet.objects.get(short=fleet_short)
     if member != channel.createdby and member != fleet.createdby:
         abort(403)
-    return render_template('mining/set_price.html', fleet=fleet, channel_short=channel_short)
+    error_msg = None
+    if request.method == 'POST' and request.form['func'] == 'set_prices':
+        for p in fleet.usage.prices_now:
+            new_price = request.form[str(p.item_type.type_id)]
+            try:
+                float(new_price)
+            except:
+                error_msg = '请填写正确的价格'
+                break
+            if new_price == 0:
+                error_msg = '价格必须大于0'
+                break
+        if not error_msg:
+            Activity.objects(id=fleet.usage.id).update_one(set__custom_prices=[])
+            for p in fleet.usage.prices_now:
+                custom_price = CustomPrice(item_type=p.item_type, price=round(float(request.form[str(p.item_type.type_id)]), 2))
+                Activity.objects(id=fleet.usage.id).update_one(push__custom_prices=custom_price)
+            return redirect(url_for('mining.productions', channel_short=channel_short, fleet_short=fleet_short))
+    if request.method == 'POST' and request.form['func'] == 'reset_prices':
+        Activity.objects(id=fleet.usage.id).update_one(set__custom_prices=[])
+    fleet = MiningFleet.objects.get(short=fleet_short)
+    return render_template('mining/custom_price.html', fleet=fleet, channel_short=channel_short, error_msg=error_msg)
         
 
 def get_item_highest_buy_price(type_id):
@@ -450,6 +490,4 @@ def get_item_highest_buy_price(type_id):
     r = http.request('GET', url)
     json_data = json.loads(r.data)
     buy = json_data['buy']['max']
-    sell = json_data['sell']['min']
-    price = buy if buy else sell
-    return price
+    return round(buy, 2)

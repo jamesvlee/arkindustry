@@ -82,12 +82,18 @@ class PriceNow(EmbeddedDocument):
     price = FloatField(min_value=0)
 
 
+class CustomPrice(EmbeddedDocument):
+    item_type = ReferenceField('UniverseType')
+    price = FloatField(min_value=0)
+
+
 MINERAL = 0
 ORE = 1
 
 class Mining(Activity):
     productions = ListField(ReferenceField('Production', reverse_delete_rule=PULL))
     prices_now = ListField(EmbeddedDocumentField('PriceNow'))
+    custom_prices = ListField(EmbeddedDocumentField('CustomPrice'))
     settlement = IntField()
     refining_ratio = FloatField()
     ratio = FloatField()

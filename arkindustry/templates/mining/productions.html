@@ -12,7 +12,7 @@
   <a class="button space-button-white" href="{{ url_for('mining.delete_fleet', channel_short=channel_short, fleet_short=fleet.short) }}">注销矿队</a>
 </span>
 {% endif %}
-<h2 class="product">矿队产出明细</h2>
+<h2>矿队产出明细</h2>
 <p class="decl">
   该矿队由
   <span class="crea-by">{{ fleet.createdby.nickname }}</span>
@@ -92,6 +92,17 @@
   </span>
   {% endif %}
 </p>
+  {% if custom_count != 0 %}
+  <p class="decl">
+    {% if custom_count == -1 %}
+    全部
+    {% else %}
+    <span class="num">{{ custom_count }}</span>
+    个
+    {% endif %}
+    价格已自定义
+  </p>
+  {% endif %}
 {% endif %}
 {% if is_creator and fleet.usage.status != CLOSED and fleet.usage.productions|length > 0 %}
   {% if is_creator and fleet.usage.status == SETTLING %}
@@ -143,7 +154,8 @@
   {% if fleet.usage.status == SETTLING %}
     {% if not fleet.usage.transport_deduct and not fleet.usage.bonus_deduct and not fleet.usage.fleet_deduct %}
     {% endif %}
-    <section class="deduct-section">
+    <a href="javascript: void(0);" onclick="$('#set-deduct').show(); $(this).hide();" class="deduct-alert button-like" style="{% if deform.transport.errors or deform.bonus.errors or deform.fleet.errors or fleet.usage.transport_deduct or fleet.usage.bonus_deduct or fleet.usage.fleet_deduct %}display: none;{% else %}display: block;{% endif %}">设置额外提成</a>
+    <section id="set-deduct" class="deduct-section" style="{% if deform.transport.errors or deform.bonus.errors or deform.fleet.errors or fleet.usage.transport_deduct or fleet.usage.bonus_deduct or fleet.usage.fleet_deduct %}display: block;{% else %}display: none;{% endif %}">
       <label class="deduct-prompt">设置额外提成</label>
       <form novalidate class="space-form" action="" method="post">
         {{ deform.csrf_token }}
@@ -196,7 +208,7 @@
     {% endif %}
     <br>
     <input class="set-actual-v-button" type="submit" value="设置">
-    <a class="cancel-ac blocked button-like" href="" onclick="document.cancelActual.submit();return false;">取消设置</a>
+    <a class="cancel-ac blocked button-like" href="" onclick="document.cancelActual.submit(); return false;">取消设置</a>
   </form>
   <form class="cancel-ac-form" action="" method="post" name="cancelActual">
     <input type="hidden" name="func" value="cancel_actual">
@@ -229,13 +241,31 @@
 {% if fleet.usage.status != UPLOADING %}
 <label class="prices-now-title product-title">{% if fleet.usage.settlement == ORE %}当日原矿价格{% elif fleet.usage.settlement == MINERAL %}当日矿物价格{% endif %}</label>
 <ul class="prices-now">
-  {% for price in fleet.usage.prices_now %}
-  <li>
-    <span class="ore">{{ price.item_type.name }}</span>
-    <span class=price>{{ price.price }}</span>
-    ISK
-  </li>
-  {% endfor %}
+  {% if fleet.usage.custom_prices %}
+    {% for price in fleet.usage.custom_prices %}
+    <li>
+      <span class="ore">{{ price.item_type.name }}</span>
+      <span class=price>{{ price.price }}</span>
+      ISK
+    </li>
+    {% endfor %}
+  {% else %}
+    {% for price in fleet.usage.prices_now %}
+    <li>
+      <span class="ore">{{ price.item_type.name }}</span>
+      <span class=price>{{ price.price }}</span>
+      ISK
+    </li>
+    {% endfor %}
+  {% endif %}
+  {% if fleet.usage.status != CLOSED and custom_count != 0 %}
+    <span class="price-prompt blocked">{% if custom_count == -1 %}全部{% else %}{{ custom_count }} 个{% endif %}价格已自定义</span>
+    <br>
+  {% endif %}
+  {% if fleet.usage.status != CLOSED %}
+    <span class="price-alert blocked">对价格不满意？</span>
+    <span class="price-prompt blocked">您可以 <a href="{{ url_for('mining.custom_price', channel_short=channel_short, fleet_short=fleet.short) }}" class="button-like">自定义价格</a></span>
+  {% endif %}
 </ul>
 <label class="summary-title product-title">矿队汇总</label>
 <ul class="summary">
