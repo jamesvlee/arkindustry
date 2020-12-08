@@ -152,9 +152,7 @@
   </p>
   {% endif %}
   {% if fleet.usage.status == SETTLING %}
-    {% if not fleet.usage.transport_deduct and not fleet.usage.bonus_deduct and not fleet.usage.fleet_deduct %}
-    {% endif %}
-    <a href="javascript: void(0);" onclick="$('#set-deduct').show(); $(this).hide();" class="deduct-alert button-like" style="{% if deform.transport.errors or deform.bonus.errors or deform.fleet.errors or fleet.usage.transport_deduct or fleet.usage.bonus_deduct or fleet.usage.fleet_deduct %}display: none;{% else %}display: block;{% endif %}">设置额外提成</a>
+    <a href="javascript: void(0);" onclick="$('#set-deduct').show(); $(this).hide();" class="deduct-alert button-like" style="{% if deform.transport.errors or deform.bonus.errors or deform.fleet.errors or fleet.usage.transport_deduct or fleet.usage.bonus_deduct or fleet.usage.fleet_deduct %}display: none;{% else %}display: inline-block;{% endif %}">设置额外提成</a>
     <section id="set-deduct" class="deduct-section" style="{% if deform.transport.errors or deform.bonus.errors or deform.fleet.errors or fleet.usage.transport_deduct or fleet.usage.bonus_deduct or fleet.usage.fleet_deduct %}display: block;{% else %}display: none;{% endif %}">
       <label class="deduct-prompt">设置额外提成</label>
       <form novalidate class="space-form" action="" method="post">
@@ -192,7 +190,6 @@
       </form>
     </section>
   <label class="actual-alert">矿队遇到袭击？</label>
-  <br>
   <label class="actual-prompt">您可以设置矿队实际收矿量</label>
   <form novalidate class="space-form actual-form" action="" method="post">
     {{ acform.csrf_token }}
@@ -259,12 +256,15 @@
     {% endfor %}
   {% endif %}
   {% if fleet.usage.status != CLOSED and custom_count != 0 %}
-    <span class="price-prompt blocked">{% if custom_count == -1 %}全部{% else %}{{ custom_count }} 个{% endif %}价格已自定义</span>
-    <br>
+    <li>
+      <span class="price-prompt blocked">{% if custom_count == -1 %}全部{% else %}{{ custom_count }} 个{% endif %}价格已自定义</span>
+    </li>
   {% endif %}
-  {% if fleet.usage.status != CLOSED %}
-    <span class="price-alert blocked">对价格不满意？</span>
-    <span class="price-prompt blocked">您可以 <a href="{{ url_for('mining.custom_price', channel_short=channel_short, fleet_short=fleet.short) }}" class="button-like">自定义价格</a></span>
+  {% if is_creator and fleet.usage.status != CLOSED %}
+    <li style="margin-bottom: 9px;">
+      <span class="price-alert blocked">对价格不满意？</span>
+      <span class="price-prompt blocked">您可以 <a href="{{ url_for('mining.custom_price', channel_short=channel_short, fleet_short=fleet.short) }}" class="button-like">自定义价格</a></span>
+    </li>
   {% endif %}
 </ul>
 <label class="summary-title product-title">矿队汇总</label>
