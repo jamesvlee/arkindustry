@@ -19,9 +19,16 @@
   <span>请将以下信息复制给您要添加的频道成员</span>
   {% endif %}
 </div>
-<div class="channel_code">
-  <span class="blocked">频道名:&emsp;<span class="name">{{ channel.name }}</span></span>
-  <br>
-  <span class="blocked">&nbsp;PIN码:&emsp;<span class="code">{{ channel.code }}</span></span>
+<div>
+  <ul>
+    <li>
+      <span class="labels">频道名：</span>
+      <span class="values">{{ channel.name }}</span>
+    </li>
+    <li>
+      <span class="labels">&nbsp;PIN码：</span>
+      <span class="values">{{ channel.code }}</span>
+    </li>
+  </ul>
 </div>
 {% endblock %}
