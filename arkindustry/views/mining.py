@@ -292,7 +292,6 @@ def productions(channel_short, fleet_short):
         except ValueError as e:
             error_msg = '似乎没有有效数据'
         except Exception as e:
-            print(e)
             error_msg = '上传失败，请复制正确的采矿明细'
         except Exception as e:
             pass
