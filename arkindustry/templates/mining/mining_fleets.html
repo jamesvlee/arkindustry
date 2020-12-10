@@ -25,7 +25,20 @@
         {% for sys in f.systems %}
         <span class="location blocked">{{ sys.name }}</span>
         {% endfor %}
-        星系创建
+	星系创建{% if f.usage.started %},{% endif %}
+      </span>
+      <span class="blocked">
+      {% if f.usage.started %}
+      <span class="blocked">
+        作业日期为
+	<span class="blocked">
+	  <span class="started">{{ f.usage.started.strftime('%m.%d') }}</span>
+	  {% if f.usage.ended > f.usage.started %}
+	  到
+	  <span class="ended">{{ f.usage.ended.strftime('%m.%d') }}</span>
+	  {% endif %}
+	</span>
+      {% endif %}
       </span>
       {% if f.usage.status == UPLOADING %}
       <span class="prompt uploading blocked">上传中...</span>
@@ -34,6 +47,7 @@
       {% elif f.usage.status == CLOSED %}
       <span class="prompt closed blocked">已收工！</span>
       {% endif %}
+      </span>
       </span>
     </a>
   </li>

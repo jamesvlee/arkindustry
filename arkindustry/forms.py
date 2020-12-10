@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, validators, BooleanField, RadioField, FloatField
+from wtforms import StringField, PasswordField, validators, BooleanField, RadioField, FloatField, DateField
 from wtforms.fields.html5 import EmailField
 from arkindustry.database import MINERAL, ORE
 
@@ -42,6 +42,8 @@ class JoiningMiningChannelForm(FlaskForm):
 
 class MiningFleetForm(FlaskForm):
     locations = StringField('活动星系', [validators.DataRequired('需要输入矿队活动星系')])
+    started = StringField('开始作业日期', [validators.InputRequired('需要输入开始作业时间')])
+    ended = StringField('结束作业日期')
 
 
 class MineralSettlementForm(FlaskForm):

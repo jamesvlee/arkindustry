@@ -172,6 +172,7 @@ def create_m_fleet(channel_short):
         abort(403)
     form = MiningFleetForm(request.form)
     error_msg = None
+    date_error_msg = None
     if request.method == 'POST' and form.validate():
         locations = form.locations.data.split()
         loc_set = set()
@@ -185,14 +186,29 @@ def create_m_fleet(channel_short):
                 break;
             else:
                 systems.append(system)
-        if not error_msg:
+        started = form.started.data
+        try:
+            started_date = datetime.datetime.strptime(started, '%Y.%m.%d')
+        except ValueError:
+            date_error_msg = '请输入正确的日期格式'
+        ended = form.ended.data
+        if not date_error_msg and ended:
+            try:
+                ended_date = datetime.datetime.strptime(ended, '%Y.%m.%d')
+                if ended_date < started_date:
+                    date_error_msg = '结束时间不能小于开始时间'
+            except ValueError:
+                date_error_msg = '请输入正确的日期格式'
+        if not date_error_msg and not ended:
+            ended_date = started_date
+        if not error_msg and not date_error_msg:
             member = Member.get_member(current_user.email)
-            fleet = create_mining_fleet(member, systems)
+            fleet = create_mining_fleet(member, systems, started_date, ended_date)
             if not fleet:
                 return abort(400)
             MiningChannel.objects(short=channel_short).update_one(push__fleets=fleet)
             return redirect(url_for('mining.mining_fleets', channel_short=channel_short))
-    return render_template('mining/create_mining_fleet.html', channel_short=channel_short, form=form, error_msg=error_msg)
+    return render_template('mining/create_mining_fleet.html', channel_short=channel_short, form=form, started_example=datetime.date.today(), error_msg=error_msg, date_error_msg=date_error_msg)
 
 
 @mod.route('/channel/<string:channel_short>/fleet/<string:fleet_short>/delete_comfirm', methods=['GET', 'POST'])
@@ -239,12 +255,13 @@ def productions(channel_short, fleet_short):
                 if pu:
                     p = pu.split()
                     time = p[0]
+                    time = datetime.datetime.strptime(time, '%Y.%m.%d')
                     item_name = p[1]
                     quantity = int(p[2])
                     volume = float(p[3])
                     system_name = p[5]
                     system = UniverseType.objects.get(name=system_name)
-                    if system in fleet.systems:
+                    if system in fleet.systems and time >= fleet.usage.started and time <= fleet.usage.ended:
                         item_type = UniverseType.objects.get(name=item_name)
                         if item_type:
                             if item_name in quans_vols:
@@ -275,6 +292,7 @@ def productions(channel_short, fleet_short):
         except ValueError as e:
             error_msg = '似乎没有有效数据'
         except Exception as e:
+            print(e)
             error_msg = '上传失败，请复制正确的采矿明细'
         except Exception as e:
             pass

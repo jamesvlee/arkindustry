@@ -22,6 +22,23 @@
   &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error_msg }}</span>
   {% endif %}
   <br>
+  <label>作业日期</label>
+  {{ form.started }}
+  到
+  {{ form.ended }}
+  <br>
+  &emsp;&emsp;&emsp;&emsp; <span class="prompt">日期格式如 {{ started_example.strftime('%Y.%m.%d') }}</span>
+  <br>
+  &emsp;&emsp;&emsp;&emsp; <span class="prompt">如仅持续一天结束日期可以为空</span>
+  {% for error in form.started.errors %}
+  <br>
+  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
+  {% endfor %}
+  {% if date_error_msg %}
+  <br>
+  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ date_error_msg }}</span>
+  {% endif %}
+  <br>
   <input type="submit" value="创建">
 </form>
 {% endblock %}

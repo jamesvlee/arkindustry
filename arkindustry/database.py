@@ -71,8 +71,9 @@ SETTLING = 1
 CLOSED = 2
 
 class Activity(Document):
-    created = DateTimeField(default=datetime.now(), required=True)
-    status = IntField(default=UPLOADING, required=True)
+    created = DateTimeField(required=True)
+    started = DateTimeField(required=True)
+    ended = DateTimeField(required=True)
 
     meta = {'allow_inheritance': True}
 
@@ -91,6 +92,7 @@ MINERAL = 0
 ORE = 1
 
 class Mining(Activity):
+    status = IntField(default=UPLOADING, required=True)
     productions = ListField(ReferenceField('Production', reverse_delete_rule=PULL))
     prices_now = ListField(EmbeddedDocumentField('PriceNow'))
     custom_prices = ListField(EmbeddedDocumentField('CustomPrice'))
@@ -108,7 +110,7 @@ class Mining(Activity):
 
 class Fleet(Document):
     createdby = ReferenceField('Member', required=True)
-    created = DateTimeField(default=datetime.now(), required=True)
+    created = DateTimeField(required=True)
     short = StringField(required=True)
     members = ListField(ReferenceField('Member'))
 
@@ -127,8 +129,8 @@ def get_fleet_by_fleet_id(fleet_id):
     return Fleet.objects.get(id=ObjectId(fleet_id))
 
 
-def create_mining_fleet(createdby, systems):
-    mining = Mining(created=datetime.now(), productions=[], prices_now=[]).save()
+def create_mining_fleet(createdby, systems, started, ended):
+    mining = Mining(created=datetime.now(), started=started, ended=ended, productions=[], prices_now=[]).save()
     short = ''.join(random.sample(string.ascii_letters + string.digits, 7))
     mining_fleet = MiningFleet(created=datetime.now(), createdby=createdby, short=short, systems=systems, members=[], usage=mining)
     return mining_fleet.save()
@@ -138,7 +140,7 @@ class Channel(Document):
     name = StringField(unique=True, required=True)
     code = StringField(required=True)
     short = StringField(required=True)
-    created = DateTimeField(default=datetime.now(), required=True)
+    created = DateTimeField(required=True)
     createdby = ReferenceField('Member', required=True)
     members = ListField(ReferenceField('Member'))
 
@@ -195,7 +197,7 @@ class Member(Document):
     email = EmailField(required=True, unique=True)
     nickname = StringField(required=True, unique=True)
     password = StringField(required=True)
-    joined= DateTimeField(default=datetime.now(), required=True)
+    joined= DateTimeField(required=True)
     mining_channels = ListField(ReferenceField('MiningChannel', reverse_delete_rule=PULL))
     last_mining_channel = ReferenceField('MiningChannel', reverse_delete_rule=NULLIFY)
 
