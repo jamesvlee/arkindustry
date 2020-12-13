@@ -72,11 +72,11 @@ def register():
         try:
             if Member.nick_exist(nickname):
                 raise
+            if not create_member(email, nickname, password):
+                return abort(400)
+            return redirect(url_for('general.login'))
         except:
             error_msg = '此昵称已存在'
-        if not create_member(email, nickname, password):
-            return abort(400)
-        return redirect(url_for('general.login'))
     return render_template('general/register.html', form=form, error_msg=error_msg)
 
 
