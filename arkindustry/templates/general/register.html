@@ -13,8 +13,8 @@
   &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
   <br>
   {% endfor %}
-  {% if error_msg %}
-  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error_msg }}</span>
+  {% if nick_error_msg %}
+  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ nick_error_msg }}</span>
   <br>
   {% endif %}
   {{ form.email.label }}&emsp;&emsp; {{ form.email }}
@@ -25,6 +25,10 @@
   &emsp;&emsp;&emsp;&emsp; <span class="err">{{ error }}</span>
   <br>
   {% endfor %}
+  {% if email_error_msg %}
+  &emsp;&emsp;&emsp;&emsp; <span class="err">{{ email_error_msg }}</span>
+  <br>
+  {% endif %}
   {{ form.password.label }}&emsp;&emsp; {{ form.password }}
   <br>
   &emsp;&emsp;&emsp;&emsp; <span class="prompt">建议不要使用游戏账号的密码</span>

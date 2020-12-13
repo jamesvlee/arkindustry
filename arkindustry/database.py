@@ -217,6 +217,12 @@ class Member(Document):
         return check_password_hash(self.password, password)
 
     @staticmethod
+    def email_exist(email):
+        if Member.objects(email=email).first():
+            return True
+        return False
+
+    @staticmethod
     def nick_exist(nickname):
         if Member.objects(nickname=nickname).first():
             return True

@@ -64,20 +64,25 @@ def index():
 @mod.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm(request.form)
-    error_msg = None
+    nick_error_msg = None
+    email_error_msg = None
     if request.method == 'POST' and form.validate():
         email = form.email.data
         nickname = form.nickname.data.strip()
         password = form.password.data
         try:
             if Member.nick_exist(nickname):
+                nick_error_msg = '此昵称已存在'
+                raise
+            if Member.email_exist(email):
+                email_error_msg = '此邮箱已存在'
                 raise
             if not create_member(email, nickname, password):
                 return abort(400)
             return redirect(url_for('general.login'))
         except:
-            error_msg = '此昵称已存在'
-    return render_template('general/register.html', form=form, error_msg=error_msg)
+            pass
+    return render_template('general/register.html', form=form, nick_error_msg=nick_error_msg, email_error_msg=email_error_msg)
 
 
 @mod.route('/login', methods=['GET', 'POST'])
