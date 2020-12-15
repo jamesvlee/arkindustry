@@ -23,6 +23,7 @@ def get_domain():
 app.add_template_global(get_var, 'get_var')
 app.add_template_global(get_domain, 'get_domain')
 
+
 @app.before_request
 def cal_copyright():
     current_year = datetime.datetime.now().year
@@ -36,6 +37,7 @@ def cal_copyright():
 @app.errorhandler(404)
 def not_found(e):
     return render_template('error/404.html'), 404
+
 
 @app.errorhandler(403)
 def forbidden(e):
