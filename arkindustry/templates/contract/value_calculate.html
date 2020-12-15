@@ -27,23 +27,23 @@
 <ul class="total_value">
   <li>
     <span class="prompt">最低出售价</span>
-    <span><span class="min-sell blocked">{{ order.total_sell }}</span> ISK</span>
+    <span><span class="min-sell blocked">{{ format_amount(order.total_sell) }}</span> ISK</span>
   </li>
   <li>
     <span class="prompt">最高收购价</span>
-    <span><span class="max-buy blocked">{{ order.total_buy }}</span> ISK</span>
+    <span><span class="max-buy blocked">{{ format_amount(order.total_buy) }}</span> ISK</span>
   </li>
 </ul>
 <label class="title">物品明细</label>
 <ul class="detail">
   {% for d in order.details %}
   <li>
-    <span class="blocked"><span class="name blocked">{{ d.name}}</span> * <span class="count">{{ d.count }}</span></span>
+    <span class="blocked"><span class="name blocked">{{ d.name}}</span> * <span class="count">{{ format_amount(d.count) }}</span></span>
     &nbsp;
-    <span class="blocked">
-      <span class="blocked"><span class="sell">{{ d.sell }}</span> ISK</span>
+    <span class="newline-blocked">
+      <span class="blocked"><span class="sell">{{ format_amount(d.sell) }}</span> ISK</span>
       &nbsp;
-      <span class="blocked"><span class="buy">{{ d.buy }}</span> ISK</span>
+      <span class="blocked"><span class="buy">{{ format_amount(d.buy) }}</span> ISK</span>
     </span>
   </li>
   {% endfor %}

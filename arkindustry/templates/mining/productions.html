@@ -259,7 +259,7 @@
     {% for price in fleet.usage.custom_prices %}
     <li>
       <span class="ore">{{ price.item_type.name }}</span>
-      <span class=price>{{ price.price }}</span>
+      <span class=price>{{ format_amount(price.price) }}</span>
       ISK
     </li>
     {% endfor %}
@@ -267,7 +267,7 @@
     {% for price in fleet.usage.prices_now %}
     <li>
       <span class="ore">{{ price.item_type.name }}</span>
-      <span class=price>{{ price.price }}</span>
+      <span class=price>{{ format_amount(price.price) }}</span>
       ISK
     </li>
     {% endfor %}
@@ -289,7 +289,7 @@
   <li>
     <span>上传总体积</span>
     <span class="blocked">
-      <span class="vol">{{ fleet.usage.upload_volume }}</span>
+      <span class="vol">{{ format_amount(fleet.usage.upload_volume) }}</span>
       m³
     </span>
   </li>
@@ -297,7 +297,7 @@
   <li>
     <span>实际收矿量</span>
     <span class="blocked">
-      <span class="vol">{{ fleet.usage.actual_volume }}</span>
+      <span class="vol">{{ format_amount(fleet.usage.actual_volume) }}</span>
       m³
     </span>
   </li>
@@ -305,7 +305,7 @@
   <li>
     <span>工资总支出</span>
     <span class="blocked">
-      <span class="salary">{{ fleet.usage.total_value }}</span>
+      <span class="salary">{{ format_amount(fleet.usage.total_value) }}</span>
       ISK
     </span>
   </li>
@@ -316,7 +316,7 @@
   <li>
     <span class="salary-getter">{{ prod.member.nickname }}</span>
     获得
-    <span class="salary">{{ prod.value }}</span>
+    <span class="salary">{{ format_amount(prod.value) }}</span>
     ISK
   </li>
   {% endfor %}
@@ -324,7 +324,7 @@
   <li>
     <span class="deduct-getter">运输</span>
     获得
-    <span class="salary">{{ trans_v }}</span>
+    <span class="salary">{{ format_amount(trans_v) }}</span>
     ISK
   </li>
   {% endif %}
@@ -332,7 +332,7 @@
   <li>
     <span class="deduct-getter">加成</span>
     获得
-    <span class="salary">{{ bonus_v }}</span>
+    <span class="salary">{{ format_amount(bonus_v) }}</span>
     ISK
   </li>
   {% endif %}
@@ -340,7 +340,7 @@
   <li>
     <span class="deduct-getter">矿队</span>
     获得
-    <span class="salary">{{ fleet_v }}</span>
+    <span class="salary">{{ format_amount(fleet_v) }}</span>
     ISK
   </li>
   {% endif %}
@@ -355,17 +355,17 @@
       <li>
 	<span class="ore">{{ mq.item_type.name }}</span>
         挖了
-	<span class="quan">{{ mq.quantity}}</span>
+	<span class="quan">{{ format_amount(mq.quantity) }}</span>
 	单位
 	<span class="blocked">
 	  共计
-	  <span class="vol">{{ mq.volume }}</span>
+	  <span class="vol">{{ format_amount(mq.volume) }}</span>
 	  m³
 	</span>
       </li>
       {% endfor %}
     </ul>
-    <p class="total-v">总体积 <span class="vol">{{ p.total_volume }}</span> m³</p>
+    <p class="total-v">总体积 <span class="vol">{{ format_amount(p.total_volume) }}</span> m³</p>
   </li>
   {% endfor %}
 </ul>

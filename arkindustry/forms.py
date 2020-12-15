@@ -32,7 +32,7 @@ class PasswordForm(FlaskForm):
 
 class MiningChannelForm(FlaskForm):
     name = StringField('频道名', [validators.DataRequired('需要输入频道名'),
-                                  validators.Length(max=9, min=2, message='频道名长度必须为%(min)d到%(max)d')])
+                                  validators.Length(max=12, min=2, message='频道名长度必须为%(min)d到%(max)d')])
 
 
 class JoiningMiningChannelForm(FlaskForm):

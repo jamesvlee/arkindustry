@@ -32,6 +32,20 @@ def mining_channels():
     return render_template('mining/mining_channels.html', member=member, channels=channels)
 
 
+@mod.route('/channel/<string:channel_short>/quit_channel_confirm', methods=['GET', 'POST'])
+@login_required
+def quit_channel(channel_short):
+    member = Member.get_member(current_user.email)
+    channel = MiningChannel.objects.get(short=channel_short)
+    if request.method == 'POST':
+        MiningChannel.objects(short=channel_short).update_one(pull__members=member)
+        Member.objects(email=current_user.email).update_one(pull__mining_channels=channel)
+        member = Member.get_member(current_user.email)
+        channels = member.mining_channels
+        return redirect(url_for('mining.mining_channels', member=member, channels=channels))
+    return render_template('mining/quit_channel.html', channel_short=channel_short)
+
+
 @mod.route('/create_channel', methods=['GET', 'POST'])
 @login_required
 def create_m_channel():
@@ -160,7 +174,7 @@ def mining_fleets(channel_short):
     fleets = MiningChannel.objects.get(short=channel_short).fleets
     for i, f in enumerate(fleets):
         fleets[i].created = f.created + datetime.timedelta(hours=-8)
-    return render_template('mining/mining_fleets.html', fleets=fleets[::-1], channel_short=channel_short, is_creator=is_creator, is_captain=is_captain)
+    return render_template('mining/mining_fleets.html', fleets=fleets, channel_short=channel_short, is_creator=is_creator, is_captain=is_captain)
 
 
 @mod.route('/channel/<string:channel_short>/create_fleet', methods=['GET', 'POST'])
@@ -416,17 +430,8 @@ def productions(channel_short, fleet_short):
     if custom_count == len(fleet.usage.prices_now):
         custom_count = -1
     fleet.created = fleet.created + datetime.timedelta(hours=-8)
-    if fleet.usage.upload_volume:
-        fleet.usage.upload_volume = '{:,}'.format(fleet.usage.upload_volume)
-    if fleet.usage.actual_volume:
-        fleet.usage.actual_volume = '{:,}'.format(fleet.usage.actual_volume)
-    for i, p in enumerate(fleet.usage.prices_now):
-        fleet.usage.prices_now[i].price = '{:,}'.format(p.price)
-    for i, p in enumerate(fleet.usage.custom_prices):
-        fleet.usage.custom_prices[i].price = '{:,}'.format(p.price)
     reduced_fleet_total_value = 0
     for i, prod in enumerate(fleet.usage.productions):
-        fleet.usage.productions[i].total_volume = '{:,}'.format(prod.total_volume)
         if prod.value:
             if fleet.usage.lossing_rate:
                 prod.value = round(prod.value * (100 - fleet.usage.lossing_rate) / 100, 2)
@@ -441,10 +446,6 @@ def productions(channel_short, fleet_short):
             if deduct_rate:
                 prod.value = prod.value * (100 - deduct_rate) / 100
             prod.value = round(prod.value, 2)
-            fleet.usage.productions[i].value = '{:,}'.format(prod.value)
-        for j, q in enumerate(prod.quantity):
-            fleet.usage.productions[i].quantity[j].quantity = '{:,}'.format(q.quantity)
-            fleet.usage.productions[i].quantity[j].volume = '{:,}'.format(q.volume)
     trans_v = 0
     bonus_v = 0
     fleet_v = 0
@@ -452,13 +453,12 @@ def productions(channel_short, fleet_short):
         fleet.usage.total_value = reduced_fleet_total_value
     if fleet.usage.total_value:
         if fleet.usage.transport_deduct:
-            trans_v = '{:,}'.format(round(fleet.usage.total_value * fleet.usage.transport_deduct / 100, 2))
+            trans_v = round(fleet.usage.total_value * fleet.usage.transport_deduct / 100, 2)
         if fleet.usage.bonus_deduct:
-            bonus_v = '{:,}'.format(round(fleet.usage.total_value * fleet.usage.bonus_deduct / 100, 2))
+            bonus_v = round(fleet.usage.total_value * fleet.usage.bonus_deduct / 100, 2)
         if fleet.usage.fleet_deduct:
-            fleet_v = '{:,}'.format(round(fleet.usage.total_value * fleet.usage.fleet_deduct / 100, 2))
+            fleet_v = round(fleet.usage.total_value * fleet.usage.fleet_deduct / 100, 2)
         fleet.usage.total_value = round(fleet.usage.total_value, 2)
-        fleet.usage.total_value = '{:,}'.format(fleet.usage.total_value)
     if current_user.is_authenticated:
         channel = MiningChannel.objects.get(short=channel_short)
         if member == channel.createdby:

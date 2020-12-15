@@ -1,0 +1,18 @@
+{% set p = 'mining' %}
+{% set back_url = url_for('mining.mining_channels', channel_short=channel_short) %}
+{% extends 'layout.html' %}
+{% block title %}退出频道{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet/less" href="{{ url_for('static', filename='quit_channel.less') }}">
+{% endblock %}
+{% block main %}
+<div class="prompt">
+  <span>您一定要退出该频道码？</span>
+</div>
+<form action="" method="post" name="quit">
+  <a class="button space-button-red blocked" href="javascript:document.quit.submit();">确认</a>
+</form>
+&nbsp;
+<a class="button space-button-white blocked" href="{{ url_for('mining.mining_channels', channel_short=channel_short) }}">取消</a>
+{% endblock %}

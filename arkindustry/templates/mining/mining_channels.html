@@ -20,7 +20,7 @@
       {% else %}
       <form class="blocked" action="" method="post" name="q{{ c.short }}">
         <input type="hidden" name="channel_short" value="{{ c.short }}">
-        <a href="javascript:document.q{{ c.short }}.submit();" class="button-like quit blocked">[退出]</a>
+	<a href="{{ url_for('mining.quit_channel', channel_short=c.short) }}" class="button-like quit blocked">[退出]</a>
       </form>
       {% endif %}
     </a>

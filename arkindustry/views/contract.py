@@ -48,12 +48,6 @@ def look(short):
     c = Contract.objects(short=short).first()
     if not c:
         abort(404)
-    for i, d in enumerate(c.details):
-        c.details[i].count = '{:,}'.format(d.count)
-        c.details[i].buy = '{:,}'.format(d.buy)
-        c.details[i].sell = '{:,}'.format(d.sell)
-    c.total_buy = '{:,}'.format(c.total_buy)
-    c.total_sell = '{:,}'.format(c.total_sell)
     return render_template('contract/value_calculate.html', order=c, redirect=True)
 
 

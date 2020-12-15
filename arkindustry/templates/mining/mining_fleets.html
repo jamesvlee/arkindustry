@@ -13,7 +13,7 @@
 <a class="button space-button-white" href="{{ url_for('mining.create_m_fleet', channel_short=channel_short) }}">创建矿队</a>
 {% endif %}
 <ul class="fleets list">
-  {% for f in fleets %}
+  {% for f in fleets|reverse %}
   <li>
     <a href="{{ url_for('mining.productions', channel_short=channel_short, fleet_short=f.short) }}">
       矿队由

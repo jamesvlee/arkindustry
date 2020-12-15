@@ -49,8 +49,8 @@
     {% for order in market.sell_orders %}
     <tr{% if loop.index % 2 == 0 %} class="highlight"{% endif %}>
       <td class="first hidden-phone nowrap hidden-tablet txtgray">{{ order.region }}</td>
-      <td class="hidden-phone nowrap txttoright">{{ order.quantity }}</td>
-      <td class="first-on-phone nowrap price txttoright">{{ order.price }} ISK</td>
+      <td class="hidden-phone nowrap txttoright">{{ format_amount(order.quantity) }}</td>
+      <td class="first-on-phone nowrap price txttoright">{{ format_amount(order.price) }} ISK</td>
       <td class="last-on-phone location"><span class="sec{% if order.security <= 0 %}00{% elif order.security == 0.1 %}01{% elif order.security == 0.2 %}02{% elif order.security == 0.3 %}03{% elif order.security == 0.4 %}04{% elif order.security == 0.5 %}05{% elif order.security == 0.6 %}06{% elif order.security == 0.7 %}07{% elif order.security == 0.8 %}08{% elif order.security == 0.9 %}09{% elif order.security == 1.0 %}10{% endif %}">{{ order.security }}</span><span class="txtgray">{{ order.station }}</span></td>
       <td class="hidden-phone nowrap txttoright">{{ moment(order.expires_in).fromNow() }}</td>
       <td class="hidden-phone nowrap txttoright txtgray last-data">{{ moment(order.received_at).fromNow() }}</td>
@@ -85,11 +85,11 @@
     {% for order in market.buy_orders %}
     <tr{% if loop.index % 2 == 0 %} class="highlight"{% endif %}>
       <td class="first hidden-phone nowrap hidden-tablet txtgray">{{ order.region }}</td>
-      <td class="hidden-phone nowrap txttoright">{{ order.quantity }}</td>
-      <td class="first-on-phone nowrap price txttoright">{{ order.price }} ISK</td>
+      <td class="hidden-phone nowrap txttoright">{{ format_amount(order.quantity) }}</td>
+      <td class="first-on-phone nowrap price txttoright">{{ format_amount(order.price) }} ISK</td>
       <td class="last-on-phone location"><span class="sec{% if order.security <= 0 %}00{% elif order.security == 0.1 %}01{% elif order.security == 0.2 %}02{% elif order.security == 0.3 %}03{% elif order.security == 0.4 %}04{% elif order.security == 0.5 %}05{% elif order.security == 0.6 %}06{% elif order.security == 0.7 %}07{% elif order.security == 0.8 %}08{% elif order.security == 0.9 %}09{% elif order.security == 1.0 %}10{% endif %}">{{ order.security }}</span><span class="txtgray">{{ order.station }}</span></td>
       <td class="hidden-phone nowrap txttoright">{% if order.range == 65535 %}星域{% elif order.range == 32767 %}恒星系{% elif order.range == 0 %}空间站{% else %}{{ order.range }}跳{% endif %}</td>
-      <td class="hidden-phone nowrap txttoright">{{ order.min_volume }}</td>
+      <td class="hidden-phone nowrap txttoright">{{ format_amount(order.min_volume) }}</td>
       <td class="hidden-phone nowrap txttoright">{{ moment(order.expires_in).fromNow() }}</td>
       <td class="hidden-phone nowrap txttoright txtgray last-data">{{ moment(order.received_at).fromNow() }}</td>
     </tr>

@@ -54,6 +54,18 @@ def load_user():
         g.user = current_user
 
 
+@app.template_filter('reverse')
+def reverse_filter(s):
+    return s[::-1]
+
+
+@app.context_processor
+def utility_processor():
+    def format_amount(amount):
+        return '{:,}'.format(amount)
+    return dict(format_amount=format_amount)
+
+
 mod = Blueprint('general', __name__)
 
 
