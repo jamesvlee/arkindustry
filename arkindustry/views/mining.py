@@ -32,7 +32,7 @@ def mining_channels():
     return render_template('mining/mining_channels.html', member=member, channels=channels)
 
 
-@mod.route('/channel/<string:channel_short>/quit_channel_confirm', methods=['GET', 'POST'])
+@mod.route('/channel/<string:channel_short>/quit_confirm', methods=['GET', 'POST'])
 @login_required
 def quit_channel(channel_short):
     member = Member.get_member(current_user.email)
