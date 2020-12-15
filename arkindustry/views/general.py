@@ -9,29 +9,28 @@ from werkzeug.security import generate_password_hash
 import datetime
 
 
-global_var = [0]
+global_var = {}
 
-def set_var(var):
-    global_var[0] = var
+def set_var(name, value):
+    global_var[name] = value
 
-def get_var():
-    return global_var[0]
+def get_var(name):
+    return global_var[name]
 
 def get_domain():
     return app.config['DOMAIN']
 
-app.add_template_global(set_var, 'set_var')
 app.add_template_global(get_var, 'get_var')
 app.add_template_global(get_domain, 'get_domain')
 
 @app.before_request
-def cal__copyright():
-    year = datetime.datetime.now().year
-    started = app.config['STARTED']
-    copyright = str(started)
-    if year > started:
-        copyright = '2020-{}'.format(year)
-    set_var(copyright)
+def cal_copyright():
+    current_year = datetime.datetime.now().year
+    started_year = app.config['STARTED_YEAR']
+    copyright_dates = str(started_year)
+    if int(current_year) > int(started_year):
+        copyright_dates = '{}-{}'.format(str(started_year), str(current_year))
+    set_var('copyright_dates', copyright_dates)
 
 
 @app.errorhandler(404)
@@ -50,8 +49,7 @@ def internal_server_error(e):
 
 @app.before_request
 def load_user():
-    if current_user:
-        g.user = current_user
+    g.user = current_user
 
 
 @app.template_filter('reverse')
